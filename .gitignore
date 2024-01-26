@@ -33,3 +33,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+/.vs/meditrack-apk/FileContentIndex/000bf652-a0eb-46de-8008-7df3c08e4fd4.vsidx
+*.vsidx
