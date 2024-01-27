@@ -17,6 +17,7 @@ import {
   useTheme,
   themeColor,
 } from "react-native-rapi-ui";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
@@ -31,7 +32,13 @@ export default function ({ navigation }) {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user); // Log user value
+        // console.log(user); // Log user value
+        showMessage({
+          message: "Success!",
+          description: "You have successfully Signed in.",
+          type: "success",
+          duration: 1000,
+        });
         navigation.navigate("MainTabs"); // Navigate to "MainTabs"
         setLoading(false);
       })
@@ -40,8 +47,8 @@ export default function ({ navigation }) {
         let errorCode = error.code;
         let errorMessage = error.message;
         // ...
-        console.log(errorCode);
-        console.log(errorMessage);
+        // console.log(errorCode);
+        // console.log(errorMessage);
         setLoading(false);
         alert(errorMessage);
       });

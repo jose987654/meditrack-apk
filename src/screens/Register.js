@@ -6,7 +6,7 @@ import {
   KeyboardAvoidingView,
   Image,
 } from "react-native";
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {
   Layout,
   Text,
@@ -15,27 +15,47 @@ import {
   useTheme,
   themeColor,
 } from "react-native-rapi-ui";
-
+import FlashMessage, { showMessage } from "react-native-flash-message";
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
-  // const auth = getAuth();
+  const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function register() {
     setLoading(true);
-    navigation.navigate("Home");
-    // await createUserWithEmailAndPassword(auth, email, password).catch(function (
-    //   error
-    // ) {
-    //   // Handle Errors here.
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // ...
-    //   setLoading(false);
-    //   alert(errorMessage);
-    // });
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Registered
+        const user = userCredential.user;
+        // console.log(user); // Log user value
+        showMessage({
+          message: "Success!",
+          description: "You have successfully Signed Up.",
+          type: "success",
+          duration: 2500,
+        });
+        setTimeout(() => {
+          navigation.navigate("Login"); // Navigate to "Login"
+          setLoading(false);
+        }, 2500); 
+        setLoading(false);
+      })
+      .catch((error) => {
+        let errorCode = error.code;
+        let errorMessage = error.message;
+        // ...
+        // console.log(errorCode);
+        // console.log(errorMessage);
+        setLoading(false);
+        showMessage({
+          message: "Error!",
+          description: errorCode,
+          type: "danger",
+          duration: 5000,
+        });
+      });
   }
 
   return (
