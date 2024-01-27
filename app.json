@@ -4,10 +4,10 @@
     "slug": "meditrack",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logoblood5.png",
+    "icon": "./assets/logoblood7.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logoblood5.png",
+      "image": "./assets/logoblood7.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
