@@ -6,7 +6,9 @@ import {
   KeyboardAvoidingView,
   Image,
 } from "react-native";
-// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { authInstance } from "../../firebaseConfig";
+// import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   Layout,
   Text,
@@ -18,24 +20,31 @@ import {
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
-  // const auth = getAuth();
+  const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function login() {
     setLoading(true);
-    navigation.navigate("MainTabs");
-    // await signInWithEmailAndPassword(auth, email, password).catch(function (
-    //   error
-    // ) {
-    //   // Handle Errors here.
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // ...
-    //   setLoading(false);
-    //   alert(errorMessage);
-    // });
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user); // Log user value
+        navigation.navigate("MainTabs"); // Navigate to "MainTabs"
+        setLoading(false);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        let errorCode = error.code;
+        let errorMessage = error.message;
+        // ...
+        console.log(errorCode);
+        console.log(errorMessage);
+        setLoading(false);
+        alert(errorMessage);
+      });
   }
 
   return (
