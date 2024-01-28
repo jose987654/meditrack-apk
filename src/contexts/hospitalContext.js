@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebaseConfig'; // Import your Firestore instance
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const HospitalDataContext = createContext();
 
@@ -14,6 +15,7 @@ export const HospitalDataProvider = ({ children }) => {
         id: doc.id,
         ...doc.data()
       }));
+      await AsyncStorage.setItem('hospitalData', JSON.stringify(data));
       setHospitalData(data);
     };
     fetchData();

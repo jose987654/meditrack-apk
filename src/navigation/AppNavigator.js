@@ -14,7 +14,31 @@ import Profile from "../screens/Profile";
 import Login from "../screens/Login";
 import ForgetPassword from "../screens/ForgetPassword";
 import Register from "../screens/Register";
+import Destinations from "../screens/Destinations";
 const MainStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
+const HomeStackScreen = () => (
+  <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+    <HomeStack.Screen name="Home" component={Home} />
+    <HomeStack.Screen name="DestinationScreen" component={Destinations} />
+  </HomeStack.Navigator>
+);
+
+const ProfileStack = createNativeStackNavigator();
+const ProfileStackScreen = () => (
+  <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+    <ProfileStack.Screen name="Profile" component={Profile} />
+    <ProfileStack.Screen name="DestinationScreen" component={Destinations} />
+  </ProfileStack.Navigator>
+);
+
+const AboutStack = createNativeStackNavigator();
+const AboutStackScreen = () => (
+  <AboutStack.Navigator screenOptions={{ headerShown: false }}>
+    <AboutStack.Screen name="About" component={About} />
+    <AboutStack.Screen name="DestinationScreen" component={Destinations} />
+  </AboutStack.Navigator>
+);
 const Main = () => {
   return (
     <MainStack.Navigator
@@ -27,6 +51,7 @@ const Main = () => {
       <MainStack.Screen name="Register" component={Register} />
       <MainStack.Screen name="MainTabs" component={MainTabs} />
       <MainStack.Screen name="SecondScreen" component={SecondScreen} />
+      <MainStack.Screen name="DestinationScreen" component={Destinations} />
     </MainStack.Navigator>
   );
 };
@@ -48,7 +73,7 @@ const MainTabs = () => {
       
       <Tabs.Screen
         name="Home"
-        component={Home}
+        component={HomeStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
             <TabBarText focused={focused} title="Home" />
@@ -60,7 +85,7 @@ const MainTabs = () => {
       />
       <Tabs.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
             <TabBarText focused={focused} title="Profile" />
@@ -72,7 +97,7 @@ const MainTabs = () => {
       />
       <Tabs.Screen
         name="About"
-        component={About}
+        component={AboutStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
             <TabBarText focused={focused} title="About" />
