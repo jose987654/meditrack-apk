@@ -9,6 +9,10 @@ import {
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { authInstance } from "../../firebaseConfig";
 // import { signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "../../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+import { getDocs, collection, deleteDoc } from "firebase/firestore";
+
 import {
   Layout,
   Text,
@@ -32,13 +36,29 @@ export default function ({ navigation }) {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        // console.log(user); // Log user value
+        console.log(user); // Log user value
+        // const fetchData = async () => {
+        //   getDocs(collection(db, 'hospitals'))
+        //   .then((snapshot) => {
+        //     // console.log('Connection exists, fetched documents:', snapshot.docs);
+        //     snapshot.docs.forEach((doc) => {
+        //       console.log('Document ID:', doc.id);
+        //       console.log('Document data:', doc.data());
+        //     });
+        //   })
+        //   .catch((error) => {
+        //     console.error('Error fetching documents:', error);
+        //   });
+        // };
+        // fetchData();
         showMessage({
           message: "Success!",
           description: "You have successfully Signed in.",
           type: "success",
           duration: 1000,
         });
+        
+ 
         navigation.navigate("MainTabs"); // Navigate to "MainTabs"
         setLoading(false);
       })

@@ -5,7 +5,10 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getStorage } from 'firebase/storage';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
+import 'firebase/firestore';
 // import auth from '@react-native-firebase/auth';
+import { collection, getDocs } from 'firebase/firestore';
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const {
   initializeAppCheck,
@@ -42,7 +45,20 @@ const storage = getStorage(app);
 
 //firestore reference getAuth
 const db = getFirestore(app);
+// const db = app.firestore();
 
 const authInstance = getAuth(app);
+
+// getDocs(collection(db, 'hospitals'))
+//   .then((snapshot) => {
+//     console.log('Connection exists, fetched documents:', snapshot.docs);
+//     snapshot.docs.forEach((doc) => {
+//       console.log('Document ID:', doc.id);
+//       console.log('Document data:', doc.data());
+//     });
+//   })
+//   .catch((error) => {
+//     console.error('Error fetching documents:', error);
+//   });
 
 export { storage, db, app, authInstance,auth };

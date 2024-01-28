@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Linking } from "react-native";
 import {
   Layout,
@@ -8,9 +8,16 @@ import {
   SectionContent,
   useTheme,
 } from "react-native-rapi-ui";
+// import { db } from "../../firebaseConfig";
+// import { doc, getDoc } from "firebase/firestore";
+// import { getDocs, collection, deleteDoc } from "firebase/firestore";
+import { useContext } from 'react';
+import { HospitalDataContext } from '../contexts/hospitalContext'; // Import the context
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
+  const hospitalData = useContext(HospitalDataContext);
+  console.log("hospitalData",hospitalData);
   return (
     <Layout>
       <View
