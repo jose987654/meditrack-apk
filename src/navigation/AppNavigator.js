@@ -72,7 +72,7 @@ const MainTabs = () => {
       {/* these icons using Ionicons */}
       
       <Tabs.Screen
-        name="Home"
+        name="HomeTab"
         component={HomeStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
@@ -84,7 +84,7 @@ const MainTabs = () => {
         }}
       />
       <Tabs.Screen
-        name="Profile"
+        name="ProfileTab"
         component={ProfileStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
@@ -96,7 +96,7 @@ const MainTabs = () => {
         }}
       />
       <Tabs.Screen
-        name="About"
+        name="AboutTab"
         component={AboutStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
