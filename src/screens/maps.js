@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { View } from "react-native";
 import { Layout, Text, TopNav } from "react-native-rapi-ui";
-import { HospitalDataContext } from "../contexts/hospitalContext";
-import { FlatList, TouchableOpacity } from "react-native";
-import { SearchBar, Icon } from "react-native-elements";
+// import { HospitalDataContext } from "../contexts/hospitalContext";
+// import { FlatList, TouchableOpacity } from "react-native";
+// import { SearchBar, Icon } from "react-native-elements";
 // import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { Marker, Polyline } from "react-native-maps";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-maps";
 import { StyleSheet } from "react-native";
-import MapViewDirections from "react-native-maps-directions";
+// import MapViewDirections from "react-native-maps-directions";
 
 export default function ({ navigation }) {
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -36,9 +36,9 @@ export default function ({ navigation }) {
 
     getLocation();
   }, []);
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690';
-  const origin = {latitude: 37.3318456, longitude: -122.0296002};
-  const destination = {latitude: 37.771707, longitude: -122.4053769};
+  const GOOGLE_MAPS_APIKEY = "AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690";
+  const origin = { latitude: 37.3318456, longitude: -122.0296002 };
+  const destination = { latitude: 37.771707, longitude: -122.4053769 };
   return (
     <Layout>
       <TopNav
@@ -78,10 +78,10 @@ export default function ({ navigation }) {
     destination={destination}
     apikey={GOOGLE_MAPS_APIKEY}
   /> */}
-  <Marker
+            {/* <Marker
                 coordinate={origin}
                 title=" Location 2"
-              />
+              /> */}
           </MapView>
         )}
       </View>

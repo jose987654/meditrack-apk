@@ -11,36 +11,34 @@ export const HospitalDataProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       const snapshot = await getDocs(collection(db, 'hospitals'));
+      let isFirstIteration = true;
       const data = await Promise.all(snapshot.docs.map(async (doc) => {
         const id = doc.id;
         const hospitalData = doc.data();
-
+    
         // Access the subcollection
         const subSnapshot = await getDocs(collection(doc.ref, 'samples'));
         const subData = subSnapshot.docs.map(subDoc => ({
           id: subDoc.id,
           ...subDoc.data()
         }));
-
+    
         // Log the subcollection data
-        // console.log("Subcollection data for hospital " + id + ":", subData);
-
-        // If subData is not empty, set it to the samplesData state variable
-        if (subData.length > 0) {
+        console.log("Subcollection data for hospital " + id + ":", subData);
+    
+        // If subData is not empty and it's the first iteration, set it to the samplesData state variable
+        if (subData.length > 0 && isFirstIteration) {
           setSamplesData(subData);
+          isFirstIteration = false;
         }
-
+    
         return {
           id,
           ...hospitalData,
           subData // This will add the subcollection data to each hospital
         };
       }));
-
-      await AsyncStorage.setItem('hospitalData', JSON.stringify(data));
-      setHospitalData(data);
-      // console.log("Hospital data here:", data)
-    };
+    }
     fetchData();
   }, []);
 
