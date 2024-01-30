@@ -66,9 +66,9 @@ export default function ({ navigation }) {
                 padding: 10,
                 borderRadius: 5,
               }}
-              //   onPress={() =>
-              //     navigation.navigate("SecondScreen", { hospitalId: item.id })
-              //   }
+                onPress={() =>
+                  navigation.navigate("MapsScreen")
+                }
             >
               <View
                 style={{ flexDirection: "row", alignItems: "center", flex: 1 }}

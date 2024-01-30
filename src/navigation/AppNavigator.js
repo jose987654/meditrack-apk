@@ -8,7 +8,9 @@ import TabBarIcon from "../components/utils/TabBarIcon";
 import TabBarText from "../components/utils/TabBarText";
 import Samples from "../screens/samples";
 import Home from "../screens/Home";
-import SecondScreen from "../screens/SecondScreen";
+import OrderScreen from "../screens/SecondScreen";
+import Approved from "../screens/Approved";
+import Maps from "../screens/maps";
 import About from "../screens/About";
 import Profile from "../screens/Profile";
 import Login from "../screens/Login";
@@ -23,6 +25,9 @@ const HomeStackScreen = () => (
     <HomeStack.Screen name="Home" component={Home} />
     <HomeStack.Screen name="SamplesScreen" component={Samples} />
     <HomeStack.Screen name="DestinationScreen" component={Destinations} />
+    <HomeStack.Screen name="MapsScreen" component={Maps} />
+    <HomeStack.Screen name="ApprovedScreen" component={Approved} />
+    <HomeStack.Screen name="OrderScreen" component={OrderScreen} />
   </HomeStack.Navigator>
 );
 
@@ -32,6 +37,9 @@ const ProfileStackScreen = () => (
     <ProfileStack.Screen name="Profile" component={Profile} />
     <ProfileStack.Screen name="DestinationScreen" component={Destinations} />
     <ProfileStack.Screen name="SamplesScreen" component={Samples} />
+    <ProfileStack.Screen name="ApprovedScreen" component={Approved} />
+    <ProfileStack.Screen name="OrderScreen" component={OrderScreen} />
+    <ProfileStack.Screen name="MapsScreen" component={Maps} />
   </ProfileStack.Navigator>
 );
 
@@ -54,7 +62,7 @@ const Main = () => {
       <MainStack.Screen name="ForgetPassword" component={ForgetPassword} />
       <MainStack.Screen name="Register" component={Register} />
       <MainStack.Screen name="MainTabs" component={MainTabs} />
-      <MainStack.Screen name="SecondScreen" component={SecondScreen} />
+      <MainStack.Screen name="SecondScreen" component={OrderScreen} />
       <MainStack.Screen name="DestinationScreen" component={Destinations} />
     </MainStack.Navigator>
   );

@@ -14,7 +14,7 @@ export default function ({ navigation }) {
   return (
     <Layout>
       <TopNav
-        middleContent="My Trips "
+        middleContent="My Approved Trips"
         leftContent={
           <Ionicons
             name="chevron-back"
@@ -32,7 +32,7 @@ export default function ({ navigation }) {
         }}
       >
         {/* This text using ubuntu font */}
-        <Text fontWeight="bold">This is my Trips screen</Text>
+        <Text fontWeight="bold">This is the  approved Trips screen</Text>
       </View>
     </Layout>
   );

@@ -5,8 +5,18 @@ import Sizes from "../constants/Sizes";
 import Card from "../constants/Card";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Bottom() {
+  const navigation = useNavigation();
+  
+const navigateToOrderScreen = () => {
+  navigation.navigate('OrderScreen');
+};
+
+const navigateToApprovedScreen = () => {
+  navigation.navigate('ApprovedScreen');
+};
   return (
     <View style={styles.bottomContainer}>
       <Text style={{ fontSize: 20, color: Colors.white, fontWeight: "bold" }}>
@@ -26,6 +36,7 @@ export default function Bottom() {
           cardText="My Trips"
           Reviewed="Traveled"
           style={{ backgroundColor: Colors.primary}}
+          onPressFunction={navigateToOrderScreen} 
         />
         <Card
           icon={
@@ -35,6 +46,7 @@ export default function Bottom() {
           cardText="Approved Mileage"
           Reviewed="Approved"
           style={{ backgroundColor: "lightgreen" }}
+          onPressFunction={navigateToApprovedScreen} 
         />
       </View>
 
