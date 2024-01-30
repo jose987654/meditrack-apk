@@ -12,6 +12,7 @@ import { authInstance } from "../../firebaseConfig";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { getDocs, collection, deleteDoc } from "firebase/firestore";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 import {
   Layout,
@@ -32,46 +33,27 @@ export default function ({ navigation }) {
 
   async function login() {
     setLoading(true);
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user); // Log user value
-        // const fetchData = async () => {
-        //   getDocs(collection(db, 'hospitals'))
-        //   .then((snapshot) => {
-        //     // console.log('Connection exists, fetched documents:', snapshot.docs);
-        //     snapshot.docs.forEach((doc) => {
-        //       console.log('Document ID:', doc.id);
-        //       console.log('Document data:', doc.data());
-        //     });
-        //   })
-        //   .catch((error) => {
-        //     console.error('Error fetching documents:', error);
-        //   });
-        // };
-        // fetchData();
-        showMessage({
-          message: "Success!",
-          description: "You have successfully Signed in.",
-          type: "success",
-          duration: 1000,
-        });
-        
- 
-        navigation.navigate("MainTabs"); // Navigate to "MainTabs"
-        setLoading(false);
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        let errorCode = error.code;
-        let errorMessage = error.message;
-        // ...
-        // console.log(errorCode);
-        // console.log(errorMessage);
-        setLoading(false);
-        alert(errorMessage);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // Signed in
+      const user = userCredential.user;
+      await AsyncStorage.setItem('isLoggedIn', 'true'); // AsyncStorage only supports string values
+      console.log(user); // Log user value
+  
+      showMessage({
+        message: "Success!",
+        description: "You have successfully Signed in.",
+        type: "success",
+        duration: 1000,
       });
+  
+      navigation.navigate("MainTabs"); // Navigate to "MainTabs"
+    } catch (error) {
+      console.log(error);
+      alert(errorMessage);
+      // Handle errors here
+    }
+    setLoading(false);
   }
 
   return (

@@ -11,7 +11,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ({ navigation }) {
-  const hospitalData = useContext(HospitalDataContext);
+  const {hospitalData,SamplesData} = useContext(HospitalDataContext);
   const [search, setSearch] = useState("");
   const [sorted, setSorted] = useState(false);
   const [sortedData, setSortedData] = useState([...hospitalData]);
@@ -112,20 +112,20 @@ export default function ({ navigation }) {
                 padding: 10,
                 borderRadius: 5,
               }}
-            //   onPress={() =>
-            //     navigation.navigate("SecondScreen", { hospitalId: item.id })
-            //   }
+              onPress={() =>
+                navigation.navigate("SamplesScreen", { hospitalId: item.id })
+              }
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                 <Icon name='hospital-o' type='font-awesome' size={24} color='#333' />
                 <Text style={{ marginLeft: 10, fontSize: 18, color: '#333', flex: 1 }} numberOfLines={1} ellipsizeMode='tail'>{item.name}</Text>
               </View>
-              {/* <Icon
+              <Icon
                 name="chevron-right"
                 type="font-awesome"
                 size={24}
                 color="#333"
-              /> */}
+              />
             </TouchableOpacity>
           )}
           removeClippedSubviews={true}

@@ -10,7 +10,7 @@ import { SearchBar, Icon } from "react-native-elements";
 import { Picker } from "@react-native-picker/picker";
 
 export default function ({ navigation }) {
-  const hospitalData = useContext(HospitalDataContext);
+  const {hospitalData,SamplesData} = useContext(HospitalDataContext);
   const [search, setSearch] = useState("");
   const [sorted, setSorted] = useState(false);
   const [sortedData, setSortedData] = useState([...hospitalData]);

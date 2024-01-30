@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { themeColor, useTheme } from "react-native-rapi-ui";
 import TabBarIcon from "../components/utils/TabBarIcon";
 import TabBarText from "../components/utils/TabBarText";
-
+import Samples from "../screens/samples";
 import Home from "../screens/Home";
 import SecondScreen from "../screens/SecondScreen";
 import About from "../screens/About";
@@ -15,11 +15,13 @@ import Login from "../screens/Login";
 import ForgetPassword from "../screens/ForgetPassword";
 import Register from "../screens/Register";
 import Destinations from "../screens/Destinations";
+import CustomSplashScreen from "../screens/splashScreen";
 const MainStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => (
   <HomeStack.Navigator screenOptions={{ headerShown: false }}>
     <HomeStack.Screen name="Home" component={Home} />
+    <HomeStack.Screen name="SamplesScreen" component={Samples} />
     <HomeStack.Screen name="DestinationScreen" component={Destinations} />
   </HomeStack.Navigator>
 );
@@ -29,6 +31,7 @@ const ProfileStackScreen = () => (
   <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
     <ProfileStack.Screen name="Profile" component={Profile} />
     <ProfileStack.Screen name="DestinationScreen" component={Destinations} />
+    <ProfileStack.Screen name="SamplesScreen" component={Samples} />
   </ProfileStack.Navigator>
 );
 
@@ -46,6 +49,7 @@ const Main = () => {
         headerShown: false,
       }}
     >
+       <MainStack.Screen name="Splash" component={CustomSplashScreen} />
       <MainStack.Screen name="Login" component={Login} />
       <MainStack.Screen name="ForgetPassword" component={ForgetPassword} />
       <MainStack.Screen name="Register" component={Register} />
@@ -95,7 +99,7 @@ const MainTabs = () => {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="AboutTab"
         component={AboutStackScreen}
         options={{
@@ -106,7 +110,7 @@ const MainTabs = () => {
             <TabBarIcon focused={focused} icon={"information-circle"} />
           ),
         }}
-      />
+      /> */}
     </Tabs.Navigator>
   );
 };
