@@ -1,18 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import Colors from "./Colors";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
-export default function Card({ icon, cardTextOne, cardTextTwo, cardText, style, Reviewed }) {
+export default function Card({
+  icon,
+  cardTextOne,
+  cardTextTwo,
+  cardText,
+  style,
+  Reviewed,
+  onPressFunction,
+}) {
   return (
     <View style={[styles.cardContainer, style]}>
-      <View style={styles.iconContainer}>
-        {icon}
-      </View>
+      <View style={styles.iconContainer}>{icon}</View>
       <Text style={styles.cardText}>{cardText}</Text>
-
       <Text style={styles.cardTextOne}>{cardTextOne}</Text>
       <View
         style={{
@@ -22,7 +27,24 @@ export default function Card({ icon, cardTextOne, cardTextTwo, cardText, style, 
         }}
       >
         <Text style={styles.cardTextTwo}>{Reviewed}</Text>
-        <AntDesign name="arrowright" size={24} color={Colors.darkGray} />
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 30,
+            height: 30,
+            backgroundColor: Colors.grey,
+            borderRadius: 50,
+          }}
+          onPress={() => {
+            console.log("Icon pressed");
+            onPressFunction && onPressFunction();
+          }}
+        >
+          <AntDesign name="arrowright" size={20} color={Colors.darkGray} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -45,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  cardText:{
+  cardText: {
     color: Colors.darkGray,
     fontWeight: "400",
     fontSize: 16,

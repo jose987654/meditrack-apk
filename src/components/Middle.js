@@ -14,7 +14,7 @@ export default function Middle() {
           Abena Dorcas
         </Text> */}
         <Text
-          style={{ fontSize: 16, color: "white", fontWeight: "500" }}
+          style={{ fontSize: 18, color: "white", fontWeight: "500" }}
         >
           abenadorcas@gmail.com
         </Text>
