@@ -23,7 +23,7 @@ export const HospitalDataProvider = ({ children }) => {
       }));
   
       // Log the subcollection data
-      console.log("Subcollection data for hospital " + id + ":", subData);
+      // console.log("Subcollection data for hospital " + id + ":", subData);
   
       // If subData is not empty and it's the first iteration, set it to the samplesData state variable
       if (subData.length > 0 && isFirstIteration) {

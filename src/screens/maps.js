@@ -7,7 +7,7 @@ import { Layout, Text, TopNav } from "react-native-rapi-ui";
 // import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { Marker, Polyline } from "react-native-maps";
+import { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import MapView from "react-native-maps";
 import { StyleSheet } from "react-native";
 // import MapViewDirections from "react-native-maps-directions";
@@ -57,9 +57,9 @@ export default function ({ navigation }) {
           <MapView
             style={styles.map}
             initialRegion={initialRegion}
-            // provider={PROVIDER_GOOGLE}
-            // showsUserLocation
-            // showsMyLocationButton
+            provider={PROVIDER_GOOGLE}
+            showsUserLocation
+            showsMyLocationButton
           >
             {currentLocation && (
               <Marker

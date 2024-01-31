@@ -38,8 +38,8 @@ export default function ({ navigation }) {
       // Signed in
       const user = userCredential.user;
       await AsyncStorage.setItem('isLoggedIn', 'true'); // AsyncStorage only supports string values
-      console.log(user); // Log user value
-  
+      // console.log(user); // Log user value
+      await AsyncStorage.setItem('user', JSON.stringify(user));
       showMessage({
         message: "Success!",
         description: "You have successfully Signed in.",

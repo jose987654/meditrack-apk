@@ -1,11 +1,26 @@
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
 export default function Middle() {
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    const fetchEmail = async () => {
+      const storedEmail = await AsyncStorage.getItem('user');
+      if (storedEmail !== null) {
+        const user = JSON.parse(storedEmail);
+        // console.log("stored useer", user)
+        setEmail(user.email);
+      }
+    }
+
+    fetchEmail();
+  }, []);
   return (
     <View style={styles.main}>
       <View style={styles.imageContainer}>
@@ -16,7 +31,7 @@ export default function Middle() {
         <Text
           style={{ fontSize: 18, color: "white", fontWeight: "500" }}
         >
-          abenadorcas@gmail.com
+         {email}
         </Text>
       </View>
 
