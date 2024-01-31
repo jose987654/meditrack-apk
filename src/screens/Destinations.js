@@ -11,7 +11,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ({ navigation }) {
-  const {hospitalData,SamplesData} = useContext(HospitalDataContext);
+  const {hospitalData,SamplesData, fetchData} = useContext(HospitalDataContext);
   const [search, setSearch] = useState("");
   const [sorted, setSorted] = useState(false);
   const [sortedData, setSortedData] = useState([...hospitalData]);

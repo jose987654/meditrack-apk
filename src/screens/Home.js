@@ -7,7 +7,7 @@ import { SearchBar, Icon } from "react-native-elements";
 import { Picker } from "@react-native-picker/picker";
 
 export default function ({ navigation }) {
-  const { hospitalData, SamplesData } = useContext(HospitalDataContext);
+  const { hospitalData, SamplesData, fetchData } = useContext(HospitalDataContext);
   const [search, setSearch] = useState("");
   const [sorted, setSorted] = useState(false);
   const [sortedData, setSortedData] = useState([...hospitalData]);
@@ -35,10 +35,13 @@ export default function ({ navigation }) {
     item.name.toLowerCase().includes(search.toLowerCase())
   );
   useEffect(() => {
-    if (hospitalData.length > 0) {
+    if (hospitalData.length === 0) {
+      setLoading(true);
+      fetchData(); // Fetch the hospital data
+    } else {
       setLoading(false);
     }
-  }, [hospitalData]);
+  }, [hospitalData, fetchData]);
 
   return (
     <Layout>
