@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "react-native-rapi-ui";
 import { Ionicons } from "@expo/vector-icons";
-
+import OrdersComponent from "./Orders";
 export default function ({ navigation }) {
   const { isDarkmode } = useTheme();
   return (
@@ -27,12 +27,13 @@ export default function ({ navigation }) {
       <View
         style={{
           flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
+          // alignItems: "center",
+          // justifyContent: "center",
         }}
       >
         {/* This text using ubuntu font */}
-        <Text fontWeight="bold">This is my Trips screen</Text>
+        {/* <Text fontWeight="bold">This is my Trips screen</Text> */}
+        <OrdersComponent />
       </View>
     </Layout>
   );

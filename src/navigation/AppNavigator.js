@@ -61,7 +61,7 @@ const Main = () => {
         headerShown: false,
       }}
     >
-       <MainStack.Screen name="Splash" component={CustomSplashScreen} />
+      <MainStack.Screen name="Splash" component={CustomSplashScreen} />
       <MainStack.Screen name="Login" component={Login} />
       <MainStack.Screen name="ForgetPassword" component={ForgetPassword} />
       <MainStack.Screen name="Register" component={Register} />
@@ -86,7 +86,7 @@ const MainTabs = () => {
       }}
     >
       {/* these icons using Ionicons */}
-      
+
       <Tabs.Screen
         name="HomeTab"
         component={HomeStackScreen}
@@ -99,18 +99,7 @@ const MainTabs = () => {
           ),
         }}
       />
-      <Tabs.Screen
-        name="ProfileTab"
-        component={ProfileStackScreen}
-        options={{
-          tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="Profile" />
-          ),
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} icon={"person"} />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="OrderTab"
         component={AboutStackScreen}
@@ -120,6 +109,18 @@ const MainTabs = () => {
           ),
           tabBarIcon: ({ focused }) => (
             <TabBarIcon focused={focused} icon={"information-circle"} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="ProfileTab"
+        component={ProfileStackScreen}
+        options={{
+          tabBarLabel: ({ focused }) => (
+            <TabBarText focused={focused} title="Profile" />
+          ),
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon focused={focused} icon={"person"} />
           ),
         }}
       />
