@@ -46,8 +46,12 @@ const ProfileStackScreen = () => (
 const AboutStack = createNativeStackNavigator();
 const AboutStackScreen = () => (
   <AboutStack.Navigator screenOptions={{ headerShown: false }}>
-    <AboutStack.Screen name="About" component={About} />
+    <AboutStack.Screen name="OrderScreen" component={OrderScreen} />
     <AboutStack.Screen name="DestinationScreen" component={Destinations} />
+    <AboutStack.Screen name="SamplesScreen" component={Samples} />
+    <AboutStack.Screen name="ApprovedScreen" component={Approved} />
+    <AboutStack.Screen name="Profile" component={Profile} />
+    <AboutStack.Screen name="MapsScreen" component={Maps} />
   </AboutStack.Navigator>
 );
 const Main = () => {
@@ -107,18 +111,18 @@ const MainTabs = () => {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="AboutTab"
+      <Tabs.Screen
+        name="OrderTab"
         component={AboutStackScreen}
         options={{
           tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="About" />
+            <TabBarText focused={focused} title="Orders" />
           ),
           tabBarIcon: ({ focused }) => (
             <TabBarIcon focused={focused} icon={"information-circle"} />
           ),
         }}
-      /> */}
+      />
     </Tabs.Navigator>
   );
 };
