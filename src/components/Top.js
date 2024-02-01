@@ -38,7 +38,7 @@ export default function Top() {
         style={styles.back}
         onPress={() => navigation.goBack()} // Add this line to navigate back
       >
-        <AntDesign name="arrowleft" size={24} color="white" />
+        <AntDesign name="arrowleft" size={34} color="white" />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -49,7 +49,9 @@ export default function Top() {
           console.log("Logout successful"); // Log message
         }}
       >
-        <AntDesign name="logout" size={35} color="white" />
+        <AntDesign name="logout" size={22} color="white" />
+        <Text style={{color: 'white', textAlign: 'center',paddingHorizontal:10}}>Logout</Text>
+
       </TouchableOpacity>
     </View>
   );
@@ -69,5 +71,18 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+  setting: {
+    backgroundColor: Colors.alt,
+    width: "auto",
+    height: 45,
+    borderTopLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 7,
+    
   },
 });
