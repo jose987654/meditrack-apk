@@ -10,7 +10,7 @@ import * as Location from "expo-location";
 import { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import MapView from "react-native-maps";
 import { StyleSheet } from "react-native";
-// import MapViewDirections from "react-native-maps-directions";
+import MapViewDirections from "react-native-maps-directions";
 
 export default function ({ navigation }) {
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -55,11 +55,12 @@ export default function ({ navigation }) {
       <View style={styles.container}>
         {initialRegion && (
           <MapView
-            style={styles.map}
+            style={StyleSheet.absoluteFill}
             initialRegion={initialRegion}
             provider={PROVIDER_GOOGLE}
             showsUserLocation
             showsMyLocationButton
+            zoomEnabled={true}
           >
             {currentLocation && (
               <Marker
@@ -71,13 +72,13 @@ export default function ({ navigation }) {
               />
             )}
             {/* <MapViewDirections
-    origin={{
-        latitude: currentLocation.latitude,
-        longitude: currentLocation.longitude,
-      }}
-    destination={destination}
-    apikey={GOOGLE_MAPS_APIKEY}
-  /> */}
+              origin={{
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+              }}
+              destination={destination}
+              apikey={GOOGLE_MAPS_APIKEY}
+            /> */}
             {/* <Marker
                 coordinate={origin}
                 title=" Location 2"
@@ -96,5 +97,10 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "100%",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    
   },
 });
