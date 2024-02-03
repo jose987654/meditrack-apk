@@ -64,7 +64,8 @@ export default function ({ navigation }) {
           <FlatList
             data={filteredData}
             keyExtractor={(item) => item.id}
-            ListHeaderComponent={ // Add this prop
+
+         keyboardShouldPersistTaps="handled"    ListHeaderComponent={ // Add this prop
                 <View
                   style={{
                     flexDirection: "row",
