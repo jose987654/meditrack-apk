@@ -18,6 +18,7 @@ import ForgetPassword from "../screens/ForgetPassword";
 import Register from "../screens/Register";
 import Destinations from "../screens/Destinations";
 import CustomSplashScreen from "../screens/splashScreen";
+import TripScreen from "../screens/tripScreen";
 const MainStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => (
@@ -28,6 +29,7 @@ const HomeStackScreen = () => (
     <HomeStack.Screen name="MapsScreen" component={Maps} />
     <HomeStack.Screen name="ApprovedScreen" component={Approved} />
     <HomeStack.Screen name="OrderScreen" component={OrderScreen} />
+    <HomeStack.Screen name="TripScreen" component={TripScreen} />
   </HomeStack.Navigator>
 );
 
@@ -40,6 +42,7 @@ const ProfileStackScreen = () => (
     <ProfileStack.Screen name="ApprovedScreen" component={Approved} />
     <ProfileStack.Screen name="OrderScreen" component={OrderScreen} />
     <ProfileStack.Screen name="MapsScreen" component={Maps} />
+    <ProfileStack.Screen name="TripScreen" component={TripScreen} />
   </ProfileStack.Navigator>
 );
 
@@ -52,6 +55,7 @@ const AboutStackScreen = () => (
     <AboutStack.Screen name="ApprovedScreen" component={Approved} />
     <AboutStack.Screen name="Profile" component={Profile} />
     <AboutStack.Screen name="MapsScreen" component={Maps} />
+    <AboutStack.Screen name="TripScreen" component={TripScreen} />
   </AboutStack.Navigator>
 );
 const Main = () => {
