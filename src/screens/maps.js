@@ -9,10 +9,13 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import MapView from "react-native-maps";
+// import Pulse from "react-native-pulse";
 import { StyleSheet } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
 import { Swipeable } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as Animatable from "react-native-animatable";
+
 export default function ({ navigation }) {
   const [tripStarted, setTripStarted] = useState(false);
 
@@ -113,7 +116,8 @@ export default function ({ navigation }) {
                   backgroundColor: "green",
                   height: 60,
                   padding: 10,
-                  margin: 8,
+                  marginVertical: 4,
+                  marginHorizontal: 8,
                   borderRadius: 10,
                   borderWidth: 1,
                   borderColor: "#ccc", // black
@@ -144,18 +148,22 @@ export default function ({ navigation }) {
             );
           }}
         >
-          <View
+          <Animatable.View
+            animation="pulse"
+            easing="ease-out"
+            iterationCount="infinite"
             style={{
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "#90EE90", // light blue
+              backgroundColor: "#90EE90", // light green
               height: 60,
               padding: 10,
-              margin: 8,
+              marginVertical: 4,
+              marginHorizontal: 8,
               borderRadius: 10,
               borderWidth: 1,
-              borderColor: "#ccc", // black
+              borderColor: "#ccc", // grey
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
@@ -167,11 +175,10 @@ export default function ({ navigation }) {
             }}
           >
             <Ionicons name="chevron-forward-outline" size={24} color="#000" />
-
             <Text style={{ textAlign: "center", color: "#000" }}>
               Swipe Right to Start trip ...
             </Text>
-          </View>
+          </Animatable.View>
         </Swipeable>
       </Layout>
     </GestureHandlerRootView>
