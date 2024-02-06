@@ -3,13 +3,15 @@ import FlashMessage from "react-native-flash-message";
 import AppNavigator from "./src/navigation/AppNavigator";
 import { ThemeProvider } from "react-native-rapi-ui";
 import { HospitalDataProvider } from "./src/contexts/hospitalContext"; // Import the provider
-
+import { SelectedHospitalProvider } from "./src/contexts/locationsContext";
 export default function App() {
   return (
     <ThemeProvider>
       <HospitalDataProvider>
-        <AppNavigator />
-        <FlashMessage position="top" />
+        <SelectedHospitalProvider>
+          <AppNavigator />
+          <FlashMessage position="top" />
+        </SelectedHospitalProvider>
       </HospitalDataProvider>
     </ThemeProvider>
   );

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { View, TouchableOpacity, Animated } from "react-native";
 import { Layout, Text, TopNav } from "react-native-rapi-ui";
+import { Alert } from 'react-native';
+import FlashMessage, { showMessage } from "react-native-flash-message";
 // import { HospitalDataContext } from "../contexts/hospitalContext";
 // import { FlatList, TouchableOpacity } from "react-native";
 // import { SearchBar, Icon } from "react-native-elements";
@@ -15,10 +17,14 @@ import MapViewDirections from "react-native-maps-directions";
 import { Swipeable } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
-
+import { SelectedHospitalContext } from "../contexts/locationsContext";
+import { HospitalDataContext } from "../contexts/hospitalContext";
+import haversine from "haversine";
 export default function ({ navigation }) {
+  const swipeableRef = useRef(null);
   const [tripStarted, setTripStarted] = useState(false);
-
+  const { hospitalData } = useContext(HospitalDataContext);
+  const { startPoint, destination } = useContext(SelectedHospitalContext);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
   useEffect(() => {
@@ -42,13 +48,45 @@ export default function ({ navigation }) {
 
     getLocation();
   }, []);
+
   const handlePress = () => {
-    // console.log("pressed");
-    setTripStarted(!tripStarted);
+    const startLocation = {
+      latitude: startPoint?.coordinatesData?.[0]?.source?.latitude,
+      longitude: startPoint?.coordinatesData?.[0]?.source?.longitude,
+    };
+
+    const distance = haversine(currentLocation, startLocation, {
+      unit: "meter",
+    });
+
+    if (distance > 50) {
+      showMessage({
+        message: "Error!",
+        description: "Failed to start the trip.",
+        type: "danger",
+        duration: 3000,
+      });
+      Alert.alert(
+        "Error !", // Title
+        "You are not within 50 meters of the start point. The trip cannot be started. Please move towards the start point." // Message
+      );
+      swipeableRef.current?.close();
+    } else {
+      // Start the trip
+      showMessage({
+        message: "Success!",
+        description: "You have started the trip.",
+        type: "success",
+        duration: 2000,
+      });
+      setTripStarted(!tripStarted);
+    }
   };
+  // console.log("Destination:", JSON.stringify(destination, null, 2));
+  // console.log("startPoint:", JSON.stringify(startPoint, null, 2));
   const GOOGLE_MAPS_APIKEY = "AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690";
   const origin = { latitude: 37.3318456, longitude: -122.0296002 };
-  const destination = { latitude: 37.771707, longitude: -122.4053769 };
+  // const destination = { latitude: 37.771707, longitude: -122.4053769 };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Layout>
@@ -76,28 +114,69 @@ export default function ({ navigation }) {
               {currentLocation && (
                 <Marker
                   coordinate={{
-                    latitude: currentLocation.latitude,
-                    longitude: currentLocation.longitude,
+                    latitude: currentLocation?.latitude,
+                    longitude: currentLocation?.longitude,
                   }}
                   title="My Location"
                 />
               )}
-              {/* <MapViewDirections
-              origin={{
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude,
-              }}
-              destination={destination}
-              apikey={GOOGLE_MAPS_APIKEY}
-            /> */}
-              {/* <Marker
-                coordinate={origin}
-                title=" Location 2"
-              /> */}
+              {startPoint &&
+                startPoint?.coordinatesData?.[0] &&
+                startPoint?.coordinatesData?.[0]?.source && (
+                  <Marker
+                    coordinate={{
+                      latitude:
+                        startPoint?.coordinatesData?.[0]?.source?.latitude,
+                      longitude:
+                        startPoint?.coordinatesData?.[0]?.source?.longitude,
+                    }}
+                    title={`Start Point: ${startPoint?.name}`}
+                  />
+                )}
+              {destination &&
+                destination?.coordinatesData?.[0] &&
+                destination?.coordinatesData?.[0]?.source && (
+                  <Marker
+                    coordinate={{
+                      latitude:
+                        destination?.coordinatesData?.[0]?.source?.latitude,
+                      longitude:
+                        destination?.coordinatesData?.[0]?.source?.longitude,
+                    }}
+                    title={`Destination: ${destination?.name}`}
+                  />
+                )}
+              {startPoint?.coordinatesData?.[0]?.source &&
+                destination?.coordinatesData?.[0]?.source && (
+                  <MapViewDirections
+                    origin={startPoint.coordinatesData[0].source}
+                    destination={destination.coordinatesData[0].source}
+                    apikey={GOOGLE_MAPS_APIKEY}
+                    strokeWidth={3}
+                    strokeColor="green"
+                  />
+                )}
+              {hospitalData.map(
+                (hospital, index) =>
+                  hospital?.coordinatesData?.[0]?.source && (
+                    <Marker
+                      key={index}
+                      coordinate={{
+                        latitude:
+                          hospital?.coordinatesData?.[0]?.source?.latitude,
+                        longitude:
+                          hospital?.coordinatesData?.[0]?.source?.longitude,
+                      }}
+                      title={`Hospital : ${hospital?.name}`}
+                      pinColor="blue"
+                    />
+                  )
+              )}
             </MapView>
           )}
         </View>
         <Swipeable
+          ref={swipeableRef}
           onSwipeableOpen={() => {
             handlePress();
             console.log("Swipe left successful!");

@@ -21,10 +21,17 @@ export const HospitalDataProvider = ({ children }) => {
         id: subDoc.id,
         ...subDoc.data()
       }));
-  
-      // Log the subcollection data
-      // console.log("Subcollection data for hospital " + id + ":", subData);
-  
+      let coordinatesData = null;
+      try {
+        const coordinatesSnapshot = await getDocs(collection(doc.ref, 'coordinates'));
+        coordinatesData = coordinatesSnapshot.docs.map(subDoc => ({
+          id: subDoc.id,
+          ...subDoc.data()
+        }));
+        // console.log("Coordinates data for hospital " + id + ":", JSON.stringify(coordinatesData, null, 2));
+      } catch (error) {
+        console.error("Error fetching 'coordinates' subcollection:", error);
+      }
       // If subData is not empty and it's the first iteration, set it to the samplesData state variable
       if (subData.length > 0 && isFirstIteration) {
         setSamplesData(subData);
@@ -34,7 +41,8 @@ export const HospitalDataProvider = ({ children }) => {
       return {
         id,
         ...hospitalData,
-        subData // This will add the subcollection data to each hospital
+        subData, // This will add the 'samples' subcollection data to each hospital
+        coordinatesData // This will add the subcollection data to each hospital
       };
     }));
 
