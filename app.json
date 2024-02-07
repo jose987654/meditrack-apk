@@ -24,7 +24,8 @@
           "apiKey": "AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690"
         }
       },
-      "package": "com.jose9876543.meditrack"
+      "package": "com.jose9876543.meditrack",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION"]
     },
     "web": {
       "favicon": "./assets/logo12.png"

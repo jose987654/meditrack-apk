@@ -7,14 +7,14 @@ import FlashMessage, { showMessage } from "react-native-flash-message";
 // import { FlatList, TouchableOpacity } from "react-native";
 // import { SearchBar, Icon } from "react-native-elements";
 // import { Picker } from "@react-native-picker/picker";
+import { collection, updateDoc, addDoc } from "firebase/firestore";
 import { Ionicons } from "@expo/vector-icons";
-import * as Location from "expo-location";
+// import * as Location from "expo-location";
 import { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import MapView from "react-native-maps";
 // import Pulse from "react-native-pulse";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import firebase from "firebase";
-import { getDocs, collection } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig"; // Import your Firestore instance
 import { StyleSheet } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
@@ -24,6 +24,57 @@ import * as Animatable from "react-native-animatable";
 import { SelectedHospitalContext } from "../contexts/locationsContext";
 import { HospitalDataContext } from "../contexts/hospitalContext";
 import haversine from "haversine";
+import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
+import * as Location from "expo-location";
+
+const LOCATION_TASK_NAME = "background-location-task";
+
+TaskManager.defineTask(
+  LOCATION_TASK_NAME,
+  async ({ data: { locations }, error }) => {
+    if (error) {
+      // Error occurred - check `error.message` for more details.
+      return;
+    }
+    if (locations) {
+      // locations is an array of location objects
+      const location = locations[0];
+
+      // Retrieve the order ID and current location from AsyncStorage
+      const orderId = await AsyncStorage.getItem("orderId");
+      // console.log("orderid :", orderId);
+      const currentLocation = JSON.parse(
+        await AsyncStorage.getItem("currentLocation")
+      );
+      // console.log("currentLocation :", currentLocation);
+      // Update the user's location in the database
+      const orderDocRef = doc(db, "orders", orderId);
+      const orderSnapshot = await getDoc(orderDocRef);
+      // console.log("snapshot :", orderSnapshot);
+      const existingData = orderSnapshot.data();
+      // console.log("existingData :", existingData);
+      // console.log("snapshot :", orderSnapshot);
+      const existingDistance = existingData.Distance || [];
+      // const updatedDistance = [...existingDistance, currentLocation];
+      const existingDistanceArray = Object.values(existingDistance);
+
+      existingDistanceArray.push({ ...currentLocation });
+      // console.log("Updated Distance Array:", existingDistanceArray);
+      // console.log("orderSnapshot :", JSON.stringify(existingData, null, 2));
+      // const orderDoc = doc(db, "orders", orderId);
+      try {
+        // Update the user's location in the database with the updated Distance array
+        await updateDoc(orderDocRef, {
+          Distance: existingDistanceArray,
+        });
+        console.log("Distance array updated successfully");
+      } catch (error) {
+        console.error("Error updating Distance array:", error);
+      }
+    }
+  }
+);
 export default function ({ navigation }) {
   const swipeableRef = useRef(null);
   const [tripStarted, setTripStarted] = useState(false);
@@ -37,13 +88,23 @@ export default function ({ navigation }) {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
+        alert(
+          "This app needs access to your location to function properly. Please grant location access."
+        );
         console.log("Permission to access location was denied");
+        return;
+      }
+      const { status: backgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync();
+      if (backgroundStatus !== "granted") {
+        alert(
+          "This app needs access to your background location to function properly. Please grant background location access."
+        );
         return;
       }
 
       let location = await Location.getCurrentPositionAsync({});
       setCurrentLocation(location.coords);
-
       setInitialRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -78,7 +139,7 @@ export default function ({ navigation }) {
       unit: "meter",
     });
 
-    if (distance > 50) {
+    if (distance > 500000000) {
       showMessage({
         message: "Error!",
         description: "Failed to start the trip.",
@@ -98,31 +159,45 @@ export default function ({ navigation }) {
         );
         return;
       }
-      const startLocation = new firebase.firestore.GeoPoint(
-        startPoint.latitude,
-        startPoint.longitude
-      );
-      const destinationLocation = new firebase.firestore.GeoPoint(
-        destination.latitude,
-        destination.longitude
-      );
+      // const startLocation = new firebase.firestore.GeoPoint(
+      //   startPoint.latitude,
+      //   startPoint.longitude
+      // );
+      // const destinationLocation = new firebase.firestore.GeoPoint(
+      //   destination.latitude,
+      //   destination.longitude
+      // );
 
       const orderData = {
-        Destination: destinationLocation,
-        Distance: [
-          startLocation,
-          "", // Replace with the actual distance value
-        ],
-        StartPoint: startLocation,
+        Destination: destination,
+        Distance: [currentLocation],
+        StartPoint: startPoint,
         Userid: email,
-        quantity: [samples],
+        quantity: samples,
         status: "Ongoing",
-        time: firebase.firestore.FieldValue.serverTimestamp(),
+        time: new Date(),
       };
 
-      console.log("orderData :", orderData);
+      // console.log("orderData :", JSON.stringify(orderData, null, 2));
       try {
-        // await db.collection("orders").add(orderData);
+        const docRef = await addDoc(collection(db, "orders"), orderData);
+        console.log("Document written with ID: ", docRef.id);
+
+        // Start the background location updates
+        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 30000, // Update every second
+          distanceInterval: 1, // Or every meter
+          // showsBackgroundLocationIndicator: true,
+        });
+
+        // Save the order ID and current location to AsyncStorage for use in the background task
+        await AsyncStorage.setItem("orderId", docRef.id);
+        await AsyncStorage.setItem(
+          "currentLocation",
+          JSON.stringify(currentLocation)
+        );
+
         showMessage({
           message: "Success!",
           description: "You have started the trip.",
@@ -130,6 +205,9 @@ export default function ({ navigation }) {
           duration: 2000,
         });
         setTripStarted(!tripStarted);
+        setTimeout(() => {
+          navigation.navigate("OrderS");
+        }, 3000);
       } catch (error) {
         console.error("Error adding document: ", error);
       }

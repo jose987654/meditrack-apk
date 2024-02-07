@@ -33,7 +33,8 @@ export default function ({ navigation }) {
     setQuantities((prev) => ({ ...prev, [item.id]: { item, quantity: value } }));
   };
 
-  const anyQuantityExists = Object.values(quantities).some((qty) => qty > 0); // Modify this line
+  // const anyQuantityExists = Object.values(quantities).some((qty) => qty > 0); // Modify this line
+  const anyQuantityExists = Object.values(quantities).some((qty) => Number(qty.quantity) > 0);
 
   return (
     <Layout>
@@ -118,7 +119,7 @@ export default function ({ navigation }) {
               }}
               onPress={() => {
                 setSelectedItem(item);
-                setTempQuantity(quantities[item.id] || "");
+                setTempQuantity(quantities[item.id]?.quantity || "");
                 setModalVisible(true);
               }}
             >
@@ -159,7 +160,7 @@ export default function ({ navigation }) {
                     textAlign: "center",
                     color: "#000",
                   }}
-                  value={quantities[item.id]}
+                  value={quantities[item.id]?.quantity.toString()} // Change this line
                   editable={false}
                 />
               </View>
@@ -230,7 +231,7 @@ export default function ({ navigation }) {
                     {selectedItem?.name}{" "}
                   </Text>
 
-                  <Text style={{ fontSize: 20, marginBottom: 20 }}>Qty.</Text>
+                  <Text style={{ fontSize: 20, marginBottom: 20 }}>Quantity.</Text>
 
                   <TextInput
                     style={{
@@ -295,11 +296,11 @@ export default function ({ navigation }) {
               width: "100%", // This will make the button take up the full width of its parent
             }}
             disabled={!anyQuantityExists}
-            onPress={() => {
-              // navigation.navigate("MapsScreen");
-              // setQuantities({}); // Clear quantities
-              // setSamples(quantities);
-              console.log("qty ",quantities)
+            onPress={() => {             
+              const filteredQuantities = Object.values(quantities).filter(qty => Number(qty.quantity) > 0);
+              // console.log("qty ", filteredQuantities);
+              setSamples(filteredQuantities);
+              navigation.navigate("MapsScreen");
             }}
           >
             <Text style={{ color: "#fff", fontSize: 18 }}>Confirm</Text>

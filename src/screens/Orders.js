@@ -1,183 +1,30 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import {
-  View,
+  // View,
   ScrollView,
   Text,
   Image,
   StyleSheet,
   TouchableOpacity,
+  Button,
 } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 // import { useOrderContext } from "./Context/OrderContext";
 // import { CartContext } from "./Context/cartContext";
-
-const allOrderItems = [
-  {
-    name: "Trip 1213898911",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Ongoing",
-  },
-  {
-    name: "Trip 42424442",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Ongoing",
-  },
-  {
-    name: "Trip 746352424",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 9898899",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 31231131",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 879988090",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 1213898",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 9977892",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 12131189898",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 121311898",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 1213118989",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 9898881",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 9212218",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 3132313",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 46576787",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 7988878",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  {
-    name: "Trip 7821311",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.34,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Ongoing",
-  },
-  {
-    name: "Trip 121311898",
-    description: "Rider Trip",
-    date: "12/7/2023, 1:40PM ",
-    price: 12.99,
-    currency: "Miles",
-    category: "Trip",
-    order_status: "Closed",
-  },
-  // Add more menu items here
-];
+// import React, { useState, useEffect, createContext } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+import * as TaskManager from 'expo-task-manager';
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as Location from 'expo-location';
+import { updateDoc, addDoc } from "firebase/firestore";
+import FlashMessage, { showMessage } from "react-native-flash-message";
+const LOCATION_TASK_NAME = 'background-location-task';
 
 const OrdersComponent = () => {
   const navigation = useNavigation();
@@ -185,14 +32,80 @@ const OrdersComponent = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [navVisible, setnavVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [cartItems, setCartItems] = useState([]);
+  const [orderData, setOrderData] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("default");
+  const [loading, setLoading] = useState(true);
+  const endTrip = async (orderId) => {    
+  
+    await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME); 
+    const orderDocRef = doc(db, "orders", orderId);
+    // const orderSnapshot = await getDoc(orderDocRef);
+    // console.log("snapshot :", orderSnapshot);
+    // const existingData = orderSnapshot.data();
+    
+    try {
+      // Update the user's location in the database with the updated Distance array
+      await updateDoc(orderDocRef, {
+        status: "Closed",
+      });
+      console.log(" updated successfully");
+      showMessage({
+        message: "Success!",
+        description: "You have successfully closed Trip in.",
+        type: "success",
+        duration: 1000,
+      });
+      fetchEmail();
+    } catch (error) {
+      console.error(" error:", error);
+      alert(errorMessage);
+    } 
+    // ...
+  };
   // const categories = ["Category 1", "Category 2", "Category 3"];
   const [sortBy, setSortBy] = useState(null); // State to store the selected sort option
   // const { selectOrderItem, selectedOrderItem } = useOrderContext();
   // const { cartLength } = useContext(CartContext);
+  const [email, setEmail] = useState("");
+  const fetchEmail = async () => {
+    setLoading(true);
+    const storedEmail = await AsyncStorage.getItem("user");
+    // console.log("user",storedEmail)
+    if (storedEmail !== null) {
+      const user = JSON.parse(storedEmail);
+      setEmail(user.email);
+      console.log("user", user.email);
 
-  const [menuItems, setMenuItems] = useState(allOrderItems);
+      const fetchData = async () => {
+        const q = query(
+          collection(db, "orders"),
+          where("Userid", "==", user.email)
+        );
+        const querySnapshot = await getDocs(q);
+
+        const orders = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })).reverse();
+
+        // Log the orders
+        console.log("Orders:", JSON.stringify(orders, null, 2));
+
+        // Set the orderData state variable with the fetched data
+        setOrderData(orders);
+      };
+
+      // Call fetchData
+      await fetchData();
+
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  const [menuItems, setMenuItems] = useState(orderData);
   const handleScroll = (event) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     if (offsetY < 100) {
@@ -220,11 +133,12 @@ const OrdersComponent = () => {
   const sortMenuItems = () => {
     let sortedItems = [...menuItems];
 
-    if (sortCriteria === "nameAZ") {
-      sortedItems.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortCriteria === "nameZA") {
-      sortedItems.sort((a, b) => b.name.localeCompare(a.name));
-    }
+    // if (sortCriteria === "nameAZ") {
+    //   sortedItems.sort((a, b) => a.name.localeCompare(b.name));
+    // } else if (sortCriteria === "nameZA") {
+    //   sortedItems.sort((a, b) => b.name.localeCompare(a.name));
+    // }
+    console.log("items", sortedItems);
 
     return sortedItems;
   };
@@ -244,12 +158,12 @@ const OrdersComponent = () => {
     // selectOrderItem(item);
     console.log("item clicked", item);
   };
-  useEffect(() => {
-    const filteredMenuItems = allOrderItems.filter((item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase())
-    );
-    setMenuItems(filteredMenuItems);
-  }, [searchText]);
+  // useEffect(() => {
+  //   const filteredMenuItems = allOrderItems.filter((item) =>
+  //     item.name.toLowerCase().includes(searchText.toLowerCase())
+  //   );
+  //   setMenuItems(filteredMenuItems);
+  // }, [searchText]);
   const [selectedItem, setSelectedItem] = useState(null);
 
   // const profileImageUrl = {require('../assets/logo.jpg')};
@@ -279,59 +193,103 @@ const OrdersComponent = () => {
             </View>
           </TouchableOpacity> */}
         </View>
-        <Text style={styles.sectionTitle}>Rider Activity</Text>
-
-        <ScrollView
-          contentContainerStyle={styles.menuList}
-          ref={scrollTimeout}
-          onScroll={handleScroll}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 10,
+          }}
         >
-          {sortMenuItems().map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.menuItem,
-                //  selectedItem === index && { backgroundColor: 'lightgrey' },
-              ]}
-              onPress={() => {
-                console.log("pressed");
-                // handleMenuItemClick(sortMenuItems()[index]);
-                // navigation.navigate("OrderDetailScreen");
-                // setIsOpen(false);
-              }}
-              activeOpacity={0.6}
-            >
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemDescription}>{item.description}</Text>
-                <View style={styles.priceContainer}>
-                  <Text style={styles.itemPrice}>{item.date}</Text>
-                </View>
-                <View style={styles.dots}>
-                  <View style={styles.priceContainer2}>
-                    <Text
-                      style={[
-                        styles.status,
-                        {
-                          color:
-                            item.order_status === "Closed" ? "green" : "red",
-                        },
-                      ]}
-                    >
-                      {item.order_status}
+          <Text style={styles.sectionTitle}>Rider Activity</Text>
+          <View style={{ marginRight: 50 }}>
+            <Button title="Refresh" onPress={fetchEmail} color="#3350FF" />
+          </View>
+        </View>
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center", // Center vertically
+              alignItems: "center", // Center horizontally
+              backgroundColor: "#f5f5f5",
+            }}
+          >
+            <ActivityIndicator size={60} color="#3350FF" />
+          </View>
+        ) : (
+          <ScrollView
+            contentContainerStyle={styles.menuList}
+            ref={scrollTimeout}
+            onScroll={handleScroll}
+          >
+            {/* <Button title="Refresh" onPress={fetchEmail} /> */}
+            {orderData.length === 0 ? (
+              <Text style={styles.itemName}>You have no Trips yet.</Text>
+            ) : (
+              orderData.map((order, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.menuItem,
+                    // selectedItem === index && { backgroundColor: 'lightgrey' },
+                  ]}
+                  onPress={async () => {
+                    console.log("pressed");
+                    await endTrip(order.id);
+                    // handleMenuItemClick(sortMenuItems()[index]);
+                    // navigation.navigate("OrderDetailScreen");
+                    // setIsOpen(false);
+                  }}
+                  activeOpacity={0.6}
+                >
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemName}>Trip {order.id}</Text>
+                    {/* Display other relevant information from the order */}
+                    {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
+                    <Text style={styles.itemDescription}>
+                      {new Date(order.time.seconds * 1000).toLocaleString()}
                     </Text>
-
-                    <View style={styles.priceContainer3}>
-                      <Text style={styles.itemPrice2}>{`${item.price}`}</Text>
-                      <Text style={styles.currency}>{item.currency}</Text>
+                    {/* Add additional information as needed */}
+                    <View style={styles.priceContainer}>
+                      {/* Render other properties as needed */}
+                      <Text style={styles.itemPrice}>
+                        {order.Destination.name}
+                      </Text>
+                    </View>
+                    <View style={styles.dots}>
+                      <View style={styles.priceContainer2}>
+                        <Text
+                          style={[
+                            styles.status,
+                            {
+                              color:
+                                order.status === "Closed" ? "green" : "red",
+                            },
+                          ]}
+                        >
+                          {order.status}
+                        </Text>
+                        {/* Render other properties as needed */}
+                        <View style={styles.priceContainer3}>
+                          {/* Render other properties as needed */}
+                          <Text
+                            style={styles.itemPrice2}
+                          >{`${order.quantity[0].quantity}`}</Text>
+                          {/* Render other properties as needed */}
+                          <Text style={styles.currency}>
+                            {order.quantity[0].item.name}
+                          </Text>
+                        </View>
+                      </View>
+                      <Icon name="chevron-right" size={34} color="#1D0776" />
                     </View>
                   </View>
-                  <Icon name="chevron-right" size={34} color="#1D0776" />
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                </TouchableOpacity>
+              ))
+            )}
+          </ScrollView>
+        )}
       </View>
     </>
   );
