@@ -5,7 +5,7 @@ import { HospitalDataContext } from "../contexts/hospitalContext";
 import { FlatList, TouchableOpacity, TextInput } from "react-native";
 import { SearchBar, Icon } from "react-native-elements";
 import { Modal, Button } from "react-native";
-
+import { SelectedHospitalContext } from "../contexts/locationsContext";
 // import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -15,7 +15,7 @@ export default function ({ navigation }) {
   const [search, setSearch] = useState("");
   //   const [sorted, setSorted] = useState(false);
   //   const [sortedData, setSortedData] = useState([...samplesData]);
-
+  const { setSamples } = useContext(SelectedHospitalContext);
   const updateSearch = (search) => {
     // setSorted(false);
     setSearch(search);
@@ -29,9 +29,8 @@ export default function ({ navigation }) {
   );
   const [quantities, setQuantities] = useState({}); // Add this line
 
-  const updateQuantity = (id, value) => {
-    // Add this function
-    setQuantities((prev) => ({ ...prev, [id]: value }));
+  const updateQuantity = (item, value) => {
+    setQuantities((prev) => ({ ...prev, [item.id]: { item, quantity: value } }));
   };
 
   const anyQuantityExists = Object.values(quantities).some((qty) => qty > 0); // Modify this line
@@ -150,7 +149,7 @@ export default function ({ navigation }) {
                 </Text>
                 <TextInput
                   style={{
-                    width: 60,
+                    width: 120,
                     height: 50,
                     borderColor: "gray",
                     borderWidth: 1,
@@ -259,7 +258,7 @@ export default function ({ navigation }) {
                   >
                     <TouchableOpacity
                       onPress={() => {
-                        updateQuantity(selectedItem.id, tempQuantity);
+                        updateQuantity(selectedItem, tempQuantity);
                         setModalVisible(false);
                       }}
                       style={{
@@ -297,8 +296,10 @@ export default function ({ navigation }) {
             }}
             disabled={!anyQuantityExists}
             onPress={() => {
-              navigation.navigate("MapsScreen");
+              // navigation.navigate("MapsScreen");
               // setQuantities({}); // Clear quantities
+              // setSamples(quantities);
+              console.log("qty ",quantities)
             }}
           >
             <Text style={{ color: "#fff", fontSize: 18 }}>Confirm</Text>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { View, TouchableOpacity, Animated } from "react-native";
 import { Layout, Text, TopNav } from "react-native-rapi-ui";
-import { Alert } from 'react-native';
+import { Alert } from "react-native";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 // import { HospitalDataContext } from "../contexts/hospitalContext";
 // import { FlatList, TouchableOpacity } from "react-native";
@@ -12,6 +12,10 @@ import * as Location from "expo-location";
 import { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import MapView from "react-native-maps";
 // import Pulse from "react-native-pulse";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import firebase from "firebase";
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "../../firebaseConfig"; // Import your Firestore instance
 import { StyleSheet } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
 import { Swipeable } from "react-native-gesture-handler";
@@ -24,7 +28,9 @@ export default function ({ navigation }) {
   const swipeableRef = useRef(null);
   const [tripStarted, setTripStarted] = useState(false);
   const { hospitalData } = useContext(HospitalDataContext);
-  const { startPoint, destination } = useContext(SelectedHospitalContext);
+  const { startPoint, destination, samples } = useContext(
+    SelectedHospitalContext
+  );
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
   useEffect(() => {
@@ -48,8 +54,21 @@ export default function ({ navigation }) {
 
     getLocation();
   }, []);
+  const [email, setEmail] = useState("");
 
-  const handlePress = () => {
+  useEffect(() => {
+    const fetchEmail = async () => {
+      const storedEmail = await AsyncStorage.getItem("user");
+      if (storedEmail !== null) {
+        const user = JSON.parse(storedEmail);
+        // console.log("stored useer", user)
+        setEmail(user.email);
+      }
+    };
+
+    fetchEmail();
+  }, []);
+  const handlePress = async () => {
     const startLocation = {
       latitude: startPoint?.coordinatesData?.[0]?.source?.latitude,
       longitude: startPoint?.coordinatesData?.[0]?.source?.longitude,
@@ -73,13 +92,47 @@ export default function ({ navigation }) {
       swipeableRef.current?.close();
     } else {
       // Start the trip
-      showMessage({
-        message: "Success!",
-        description: "You have started the trip.",
-        type: "success",
-        duration: 2000,
-      });
-      setTripStarted(!tripStarted);
+      if (!startPoint || !destination) {
+        console.log(
+          "Start point or destination is null. Cannot submit trip order."
+        );
+        return;
+      }
+      const startLocation = new firebase.firestore.GeoPoint(
+        startPoint.latitude,
+        startPoint.longitude
+      );
+      const destinationLocation = new firebase.firestore.GeoPoint(
+        destination.latitude,
+        destination.longitude
+      );
+
+      const orderData = {
+        Destination: destinationLocation,
+        Distance: [
+          startLocation,
+          "", // Replace with the actual distance value
+        ],
+        StartPoint: startLocation,
+        Userid: email,
+        quantity: [samples],
+        status: "Ongoing",
+        time: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      console.log("orderData :", orderData);
+      try {
+        // await db.collection("orders").add(orderData);
+        showMessage({
+          message: "Success!",
+          description: "You have started the trip.",
+          type: "success",
+          duration: 2000,
+        });
+        setTripStarted(!tripStarted);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
     }
   };
   // console.log("Destination:", JSON.stringify(destination, null, 2));
