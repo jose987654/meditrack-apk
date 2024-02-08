@@ -28,6 +28,7 @@ import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as Location from "expo-location";
 
+
 const LOCATION_TASK_NAME = "background-location-task";
 
 TaskManager.defineTask(
@@ -130,6 +131,22 @@ export default function ({ navigation }) {
     fetchEmail();
   }, []);
   const handlePress = async () => {
+    // await AsyncStorage.removeItem("orderId");
+    // Check if orderId exists in AsyncStorage
+    const orderId = await AsyncStorage.getItem("orderId");
+    if (orderId) {
+      Alert.alert(
+        "Ongoing Trip",
+        "You have an ongoing trip. Please finish / Close it before starting a new one.",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("OrderScreen"),
+          },
+        ]
+      );
+      return;
+    }
     const startLocation = {
       latitude: startPoint?.coordinatesData?.[0]?.source?.latitude,
       longitude: startPoint?.coordinatesData?.[0]?.source?.longitude,
@@ -206,7 +223,7 @@ export default function ({ navigation }) {
         });
         setTripStarted(!tripStarted);
         setTimeout(() => {
-          navigation.navigate("OrderS");
+          navigation.navigate("OrderScreen");
         }, 3000);
       } catch (error) {
         console.error("Error adding document: ", error);
@@ -232,105 +249,148 @@ export default function ({ navigation }) {
           }
           leftAction={() => navigation.goBack()}
         />
-        <View style={styles.container}>
-          {initialRegion && (
-            <MapView
-              style={StyleSheet.absoluteFill}
-              initialRegion={initialRegion}
-              provider={PROVIDER_GOOGLE}
-              showsUserLocation
-              showsMyLocationButton
-              zoomEnabled={true}
-            >
-              {currentLocation && (
-                <Marker
-                  coordinate={{
-                    latitude: currentLocation?.latitude,
-                    longitude: currentLocation?.longitude,
-                  }}
-                  title="My Location"
-                />
-              )}
-              {startPoint &&
-                startPoint?.coordinatesData?.[0] &&
-                startPoint?.coordinatesData?.[0]?.source && (
+        {initialRegion && (
+          <>
+            <View style={styles.container}>
+              <MapView
+                style={StyleSheet.absoluteFill}
+                initialRegion={initialRegion}
+                provider={PROVIDER_GOOGLE}
+                showsUserLocation
+                showsMyLocationButton
+                zoomEnabled={true}
+              >
+                {currentLocation && (
                   <Marker
                     coordinate={{
-                      latitude:
-                        startPoint?.coordinatesData?.[0]?.source?.latitude,
-                      longitude:
-                        startPoint?.coordinatesData?.[0]?.source?.longitude,
+                      latitude: currentLocation?.latitude,
+                      longitude: currentLocation?.longitude,
                     }}
-                    title={`Start Point: ${startPoint?.name}`}
+                    title="My Location"
                   />
                 )}
-              {destination &&
-                destination?.coordinatesData?.[0] &&
-                destination?.coordinatesData?.[0]?.source && (
-                  <Marker
-                    coordinate={{
-                      latitude:
-                        destination?.coordinatesData?.[0]?.source?.latitude,
-                      longitude:
-                        destination?.coordinatesData?.[0]?.source?.longitude,
-                    }}
-                    title={`Destination: ${destination?.name}`}
-                  />
-                )}
-              {startPoint?.coordinatesData?.[0]?.source &&
-                destination?.coordinatesData?.[0]?.source && (
-                  <MapViewDirections
-                    origin={startPoint.coordinatesData[0].source}
-                    destination={destination.coordinatesData[0].source}
-                    apikey={GOOGLE_MAPS_APIKEY}
-                    strokeWidth={3}
-                    strokeColor="green"
-                  />
-                )}
-              {hospitalData.map(
-                (hospital, index) =>
-                  hospital?.coordinatesData?.[0]?.source && (
+                {startPoint &&
+                  startPoint?.coordinatesData?.[0] &&
+                  startPoint?.coordinatesData?.[0]?.source && (
                     <Marker
-                      key={index}
                       coordinate={{
                         latitude:
-                          hospital?.coordinatesData?.[0]?.source?.latitude,
+                          startPoint?.coordinatesData?.[0]?.source?.latitude,
                         longitude:
-                          hospital?.coordinatesData?.[0]?.source?.longitude,
+                          startPoint?.coordinatesData?.[0]?.source?.longitude,
                       }}
-                      title={`Hospital : ${hospital?.name}`}
-                      pinColor="blue"
+                      title={`Start Point: ${startPoint?.name}`}
                     />
-                  )
-              )}
-            </MapView>
-          )}
-        </View>
-        <Swipeable
-          ref={swipeableRef}
-          onSwipeableOpen={() => {
-            handlePress();
-            console.log("Swipe left successful!");
-          }}
-          renderLeftActions={(progress, dragX) => {
-            const trans = dragX.interpolate({
-              inputRange: [0, 50, 100, 101],
-              outputRange: [-20, 0, 0, 1],
-            });
-            return (
-              <View
+                  )}
+                {destination &&
+                  destination?.coordinatesData?.[0] &&
+                  destination?.coordinatesData?.[0]?.source && (
+                    <Marker
+                      coordinate={{
+                        latitude:
+                          destination?.coordinatesData?.[0]?.source?.latitude,
+                        longitude:
+                          destination?.coordinatesData?.[0]?.source?.longitude,
+                      }}
+                      title={`Destination: ${destination?.name}`}
+                    />
+                  )}
+                {startPoint?.coordinatesData?.[0]?.source &&
+                  destination?.coordinatesData?.[0]?.source && (
+                    <MapViewDirections
+                      origin={startPoint.coordinatesData[0].source}
+                      destination={destination.coordinatesData[0].source}
+                      apikey={GOOGLE_MAPS_APIKEY}
+                      strokeWidth={3}
+                      strokeColor="green"
+                    />
+                  )}
+                {hospitalData.map(
+                  (hospital, index) =>
+                    hospital?.coordinatesData?.[0]?.source && (
+                      <Marker
+                        key={index}
+                        coordinate={{
+                          latitude:
+                            hospital?.coordinatesData?.[0]?.source?.latitude,
+                          longitude:
+                            hospital?.coordinatesData?.[0]?.source?.longitude,
+                        }}
+                        title={`Hospital : ${hospital?.name}`}
+                        pinColor="blue"
+                      />
+                    )
+                )}
+              </MapView>
+            </View>
+            <Swipeable
+              ref={swipeableRef}
+              onSwipeableOpen={() => {
+                handlePress();
+                console.log("Swipe left successful!");
+              }}
+              renderLeftActions={(progress, dragX) => {
+                const trans = dragX.interpolate({
+                  inputRange: [0, 50, 100, 101],
+                  outputRange: [-20, 0, 0, 1],
+                });
+                return (
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "green",
+                      height: 60,
+                      padding: 10,
+                      marginVertical: 4,
+                      marginHorizontal: 8,
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: "#ccc", // black
+                      shadowColor: "#000",
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                      elevation: 5,
+                      flex: 1,
+                    }}
+                  >
+                    <Animated.Text
+                      style={[
+                        {
+                          // transform: [{ translateX: trans }],
+                          color: "white",
+                          fontWeight: "600",
+                          textAlign: "right",
+                        },
+                      ]}
+                    >
+                      Trip Started
+                    </Animated.Text>
+                  </View>
+                );
+              }}
+            >
+              <Animatable.View
+                animation="pulse"
+                easing="ease-out"
+                iterationCount="infinite"
                 style={{
-                  flexDirection: "column",
+                  flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "green",
+                  backgroundColor: "#90EE90", // light green
                   height: 60,
                   padding: 10,
                   marginVertical: 4,
                   marginHorizontal: 8,
                   borderRadius: 10,
                   borderWidth: 1,
-                  borderColor: "#ccc", // black
+                  borderColor: "#ccc", // grey
                   shadowColor: "#000",
                   shadowOffset: {
                     width: 0,
@@ -339,57 +399,20 @@ export default function ({ navigation }) {
                   shadowOpacity: 0.25,
                   shadowRadius: 3.84,
                   elevation: 5,
-                  flex: 1,
                 }}
               >
-                <Animated.Text
-                  style={[
-                    {
-                      // transform: [{ translateX: trans }],
-                      color: "white",
-                      fontWeight: "600",
-                      textAlign: "right",
-                    },
-                  ]}
-                >
-                  Trip Started
-                </Animated.Text>
-              </View>
-            );
-          }}
-        >
-          <Animatable.View
-            animation="pulse"
-            easing="ease-out"
-            iterationCount="infinite"
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#90EE90", // light green
-              height: 60,
-              padding: 10,
-              marginVertical: 4,
-              marginHorizontal: 8,
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: "#ccc", // grey
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-          >
-            <Ionicons name="chevron-forward-outline" size={24} color="#000" />
-            <Text style={{ textAlign: "center", color: "#000" }}>
-              Swipe Right to Start trip ...
-            </Text>
-          </Animatable.View>
-        </Swipeable>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={24}
+                  color="#000"
+                />
+                <Text style={{ textAlign: "center", color: "#000" }}>
+                  Swipe Right to Start trip ...
+                </Text>
+              </Animatable.View>
+            </Swipeable>
+          </>
+        )}
       </Layout>
     </GestureHandlerRootView>
   );

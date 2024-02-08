@@ -56,6 +56,7 @@ const OrdersComponent = () => {
         duration: 1000,
       });
       fetchEmail();
+      await AsyncStorage.removeItem("orderId");
     } catch (error) {
       console.error(" error:", error);
       alert(errorMessage);
@@ -74,7 +75,7 @@ const OrdersComponent = () => {
     if (storedEmail !== null) {
       const user = JSON.parse(storedEmail);
       setEmail(user.email);
-      console.log("user", user.email);
+      // console.log("user", user.email);
 
       const fetchData = async () => {
         const q = query(
@@ -86,10 +87,10 @@ const OrdersComponent = () => {
         const orders = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })).reverse();
+        })).sort((a, b) => b.time.seconds - a.time.seconds);
 
         // Log the orders
-        console.log("Orders:", JSON.stringify(orders, null, 2));
+        // console.log("Orders:", JSON.stringify(orders, null, 2));
 
         // Set the orderData state variable with the fetched data
         setOrderData(orders);
