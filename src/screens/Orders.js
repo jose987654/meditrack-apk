@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
-import { RefreshControl } from 'react-native';
+import { RefreshControl } from "react-native";
 import { View, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -20,33 +20,32 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-import * as TaskManager from 'expo-task-manager';
-import * as BackgroundFetch from 'expo-background-fetch';
-import * as Location from 'expo-location';
-import { OrderContext } from '../contexts/orderContext';
+import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
+import * as Location from "expo-location";
+import { OrderContext } from "../contexts/orderContext";
 import { updateDoc, addDoc } from "firebase/firestore";
 import FlashMessage, { showMessage } from "react-native-flash-message";
-const LOCATION_TASK_NAME = 'background-location-task';
+const LOCATION_TASK_NAME = "background-location-task";
 
 const OrdersComponent = () => {
   const navigation = useNavigation();
   const { order, setOrder } = useContext(OrderContext);
   const scrollTimeout = useRef(null);
-  const [refreshing, setRefreshing]  = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [navVisible, setnavVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [orderData, setOrderData] = useState([]);
   const [sortCriteria, setSortCriteria] = useState("default");
   const [loading, setLoading] = useState(true);
-  const endTrip = async (orderId) => {    
-  
-    await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME); 
+  const endTrip = async (orderId) => {
+    await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
     const orderDocRef = doc(db, "orders", orderId);
     // const orderSnapshot = await getDoc(orderDocRef);
     // console.log("snapshot :", orderSnapshot);
     // const existingData = orderSnapshot.data();
-    
+
     try {
       // Update the user's location in the database with the updated Distance array
       await updateDoc(orderDocRef, {
@@ -64,7 +63,7 @@ const OrdersComponent = () => {
     } catch (error) {
       console.error(" error:", error);
       alert(errorMessage);
-    } 
+    }
     // ...
   };
   // const categories = ["Category 1", "Category 2", "Category 3"];
@@ -90,10 +89,12 @@ const OrdersComponent = () => {
         );
         const querySnapshot = await getDocs(q);
 
-        const orders = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })).sort((a, b) => b.time.seconds - a.time.seconds);
+        const orders = querySnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .sort((a, b) => b.time.seconds - a.time.seconds);
 
         // Log the orders
         // console.log("Orders:", JSON.stringify(orders, null, 2));
@@ -212,19 +213,18 @@ const OrdersComponent = () => {
           <View style={{ marginRight: 50 }}>
             <Button title="Refresh" onPress={fetchEmail} color="#3350FF" />
           </View>
-          
         </View>
         <Text
-            style={{
-              fontSize: 15,
-              fontWeight: "400",
-              marginBottom: 10,
-              color: "#1D0776",
-              textDecorationLine: 'underline',
-            }}
-          >
-            * Pull Down or Press Refresh to get new Updates *
-          </Text>
+          style={{
+            fontSize: 17,
+            fontWeight: "400",
+            marginBottom: 10,
+            color: "#1D0776",
+            textDecorationLine: "underline",
+          }}
+        >
+          * Pull Down or Press Refresh to get new Updates *
+        </Text>
         {loading ? (
           <View
             style={{
@@ -242,77 +242,92 @@ const OrdersComponent = () => {
             ref={scrollTimeout}
             onScroll={handleScroll}
             refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={fetchEmail}
-              />
+              <RefreshControl refreshing={refreshing} onRefresh={fetchEmail} />
             }
           >
             {/* <Button title="Refresh" onPress={fetchEmail} /> */}
             {orderData.length === 0 ? (
               <Text style={styles.itemName}>You have no Trips yet.</Text>
             ) : (
-              orderData.map((order, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.menuItem,
-                    // selectedItem === index && { backgroundColor: 'lightgrey' },
-                  ]}
-                  onPress={async () => {
-                    // console.log("pressed");
-                    // await endTrip(order.id);
-                    await setOrder(order);
-                    // handleMenuItemClick(sortMenuItems()[index]);
-                    navigation.navigate("TripDetailScreen");
-                
+              <>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "400",
+                    marginBottom: 10,
+                    color: "#000",
+                    textDecorationLine: "underline",
                   }}
-                  activeOpacity={0.6}
                 >
-                  <View style={styles.itemInfo}>
-                    <Text style={styles.itemName}>Trip {order.id}</Text>
-                    {/* Display other relevant information from the order */}
-                    {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
-                    <Text style={styles.itemDescription}>
-                      {new Date(order.time.seconds * 1000).toLocaleString()}
-                    </Text>
-                    {/* Add additional information as needed */}
-                    <View style={styles.priceContainer}>
-                      {/* Render other properties as needed */}
-                      <Text style={styles.itemPrice}>
-                        {order.Destination.name}
-                      </Text>
-                    </View>
-                    <View style={styles.dots}>
-                      <View style={styles.priceContainer2}>
-                        <Text
-                          style={[
-                            styles.status,
-                            {
-                              color:
-                                order.status === "Closed" ? "green" : "red",
-                            },
-                          ]}
-                        >
-                          {order.status}
+                 Total : {orderData?.length} Trips.
+                </Text>
+                {orderData.map((order, index) => (
+                  <>
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.menuItem,
+                        // selectedItem === index && { backgroundColor: 'lightgrey' },
+                      ]}
+                      onPress={async () => {
+                        // console.log("pressed");
+                        // await endTrip(order.id);
+                        await setOrder(order);
+                        // handleMenuItemClick(sortMenuItems()[index]);
+                        navigation.navigate("TripDetailScreen");
+                      }}
+                      activeOpacity={0.6}
+                    >
+                      <View style={styles.itemInfo}>
+                        <Text style={styles.itemName}>Trip {order.id}</Text>
+                        {/* Display other relevant information from the order */}
+                        {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
+                        <Text style={styles.itemDescription}>
+                          {new Date(order.time.seconds * 1000).toLocaleString()}
                         </Text>
-                        {/* Render other properties as needed */}
-                        <View style={styles.priceContainer3}>
+                        {/* Add additional information as needed */}
+                        <View style={styles.priceContainer}>
                           {/* Render other properties as needed */}
-                          <Text
-                            style={styles.itemPrice2}
-                          >{`${order.quantity[0].quantity}`}</Text>
-                          {/* Render other properties as needed */}
-                          <Text style={styles.currency}>
-                            {order.quantity[0].item.name}
+                          <Text style={styles.itemPrice}>
+                            {order.Destination.name}
                           </Text>
                         </View>
+                        <View style={styles.dots}>
+                          <View style={styles.priceContainer2}>
+                            <Text
+                              style={[
+                                styles.status,
+                                {
+                                  color:
+                                    order.status === "Closed" ? "green" : "red",
+                                },
+                              ]}
+                            >
+                              {order.status}
+                            </Text>
+                            {/* Render other properties as needed */}
+                            <View style={styles.priceContainer3}>
+                              {/* Render other properties as needed */}
+                              <Text
+                                style={styles.itemPrice2}
+                              >{`${order.quantity[0].quantity}`}</Text>
+                              {/* Render other properties as needed */}
+                              <Text style={styles.currency}>
+                                {order.quantity[0].item.name}
+                              </Text>
+                            </View>
+                          </View>
+                          <Icon
+                            name="chevron-right"
+                            size={34}
+                            color="#1D0776"
+                          />
+                        </View>
                       </View>
-                      <Icon name="chevron-right" size={34} color="#1D0776" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))
+                    </TouchableOpacity>
+                  </>
+                ))}
+              </>
             )}
           </ScrollView>
         )}

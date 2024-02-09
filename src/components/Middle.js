@@ -24,7 +24,7 @@ export default function Middle() {
     };
   
     const countOrders = () => {
-      const ongoingOrders = orderData.filter(order => order?.status === "Submitted");
+      const ongoingOrders = orderData.filter(order => order?.status === "Closed");
       const reviewedOrders = orderData.filter(order => order?.status === "Reviewed");
       const closedOrders = orderData.filter(order => order?.status === "Approved");
   
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   bottomtext: {
-    fontSize: 20,
+    fontSize: 24,
     color: Colors.darkGray,
     fontWeight: "800",
   },

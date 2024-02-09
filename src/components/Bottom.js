@@ -1,14 +1,16 @@
+import React, { useState, useEffect,useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
 import Colors from "../constants/Colors";
 import Sizes from "../constants/Sizes";
 import Card from "../constants/Card";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { HospitalDataContext } from "../contexts/hospitalContext";
 
 export default function Bottom() {
   const navigation = useNavigation();
+  const { orderData } = useContext(HospitalDataContext);
   
 const navigateToOrderScreen = () => {
   navigation.navigate('OrderScreen');
@@ -32,7 +34,7 @@ const navigateToApprovedScreen = () => {
               color={"#102294"}
             />
           }
-          cardTextOne="0 Trips"
+          cardTextOne={`${orderData.length} Trips`}
           cardText="My Trips"
           Reviewed="Traveled"
           style={{ backgroundColor: Colors.primary}}
