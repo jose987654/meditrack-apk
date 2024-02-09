@@ -99,7 +99,7 @@ export default function ({ navigation }) {
                 padding: 30,
               }}
             >
-              Register
+              SignUp, Medi-Track
             </Text>
             <Text>Email</Text>
             <TextInput
@@ -168,7 +168,7 @@ export default function ({ navigation }) {
                 justifyContent: "center",
               }}
             >
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   isDarkmode ? setTheme("light") : setTheme("dark");
                 }}
@@ -182,7 +182,7 @@ export default function ({ navigation }) {
                 >
                   {isDarkmode ? "☀️ light theme" : "🌑 dark theme"}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </ScrollView>
