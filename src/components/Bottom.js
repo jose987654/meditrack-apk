@@ -32,7 +32,7 @@ const navigateToApprovedScreen = () => {
               color={"#102294"}
             />
           }
-          cardTextOne="242"
+          cardTextOne="0 Trips"
           cardText="My Trips"
           Reviewed="Traveled"
           style={{ backgroundColor: Colors.primary}}
@@ -42,7 +42,7 @@ const navigateToApprovedScreen = () => {
           icon={
             <FontAwesome name="check" size={24} color={"green"} />
           }
-          cardTextOne="1,552 miles"
+          cardTextOne="0 miles"
           cardText="Approved Mileage"
           Reviewed="Approved"
           style={{ backgroundColor: "lightgreen" }}

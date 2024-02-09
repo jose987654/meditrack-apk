@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
+import { RefreshControl } from 'react-native';
 import { View, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -31,6 +32,7 @@ const OrdersComponent = () => {
   const navigation = useNavigation();
   const { order, setOrder } = useContext(OrderContext);
   const scrollTimeout = useRef(null);
+  const [refreshing, setRefreshing]  = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [navVisible, setnavVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -71,7 +73,9 @@ const OrdersComponent = () => {
   // const { cartLength } = useContext(CartContext);
   const [email, setEmail] = useState("");
   const fetchEmail = async () => {
+    setRefreshing(true);
     setLoading(true);
+
     const storedEmail = await AsyncStorage.getItem("user");
     // console.log("user",storedEmail)
     if (storedEmail !== null) {
@@ -100,7 +104,7 @@ const OrdersComponent = () => {
 
       // Call fetchData
       await fetchData();
-
+      setRefreshing(false);
       setLoading(false);
     }
   };
@@ -219,7 +223,7 @@ const OrdersComponent = () => {
               textDecorationLine: 'underline',
             }}
           >
-            * Press Refresh to get new Updates*
+            * Pull Down or Press Refresh to get new Updates *
           </Text>
         {loading ? (
           <View
@@ -237,6 +241,12 @@ const OrdersComponent = () => {
             contentContainerStyle={styles.menuList}
             ref={scrollTimeout}
             onScroll={handleScroll}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={fetchEmail}
+              />
+            }
           >
             {/* <Button title="Refresh" onPress={fetchEmail} /> */}
             {orderData.length === 0 ? (
