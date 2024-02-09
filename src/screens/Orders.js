@@ -22,12 +22,14 @@ import { doc, getDoc } from "firebase/firestore";
 import * as TaskManager from 'expo-task-manager';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as Location from 'expo-location';
+import { OrderContext } from '../contexts/orderContext';
 import { updateDoc, addDoc } from "firebase/firestore";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 const LOCATION_TASK_NAME = 'background-location-task';
 
 const OrdersComponent = () => {
   const navigation = useNavigation();
+  const { order, setOrder } = useContext(OrderContext);
   const scrollTimeout = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
   const [navVisible, setnavVisible] = useState(false);
@@ -199,14 +201,26 @@ const OrdersComponent = () => {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 10,
+            marginBottom: 8,
           }}
         >
           <Text style={styles.sectionTitle}>Rider Activity</Text>
           <View style={{ marginRight: 50 }}>
             <Button title="Refresh" onPress={fetchEmail} color="#3350FF" />
           </View>
+          
         </View>
+        <Text
+            style={{
+              fontSize: 15,
+              fontWeight: "400",
+              marginBottom: 10,
+              color: "#1D0776",
+              textDecorationLine: 'underline',
+            }}
+          >
+            * Press Refresh to get new Updates*
+          </Text>
         {loading ? (
           <View
             style={{
@@ -236,11 +250,12 @@ const OrdersComponent = () => {
                     // selectedItem === index && { backgroundColor: 'lightgrey' },
                   ]}
                   onPress={async () => {
-                    console.log("pressed");
-                    await endTrip(order.id);
+                    // console.log("pressed");
+                    // await endTrip(order.id);
+                    await setOrder(order);
                     // handleMenuItemClick(sortMenuItems()[index]);
-                    // navigation.navigate("OrderDetailScreen");
-                    // setIsOpen(false);
+                    navigation.navigate("TripDetailScreen");
+                
                   }}
                   activeOpacity={0.6}
                 >

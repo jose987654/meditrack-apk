@@ -1,52 +1,68 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { HospitalDataContext } from "../contexts/hospitalContext";
 
 export default function Middle() {
-  const [email, setEmail] = useState('');
-
+  const [email, setEmail] = useState("");
+  const [ongoingOrdersCount, setOngoingOrdersCount] = useState(0);
+  const [reviewedOrdersCount, setReviewedOrdersCount] = useState(0);
+  const [closedOrdersCount, setClosedOrdersCount] = useState(0);
+  const { orderData } = useContext(HospitalDataContext);
+  // console.log("orders",orderData);
   useEffect(() => {
     const fetchEmail = async () => {
-      const storedEmail = await AsyncStorage.getItem('user');
+      const storedEmail = await AsyncStorage.getItem("user");
       if (storedEmail !== null) {
         const user = JSON.parse(storedEmail);
-        // console.log("stored useer", user)
         setEmail(user.email);
       }
-    }
-
+    };
+  
+    const countOrders = () => {
+      const ongoingOrders = orderData.filter(order => order?.status === "Submitted");
+      const reviewedOrders = orderData.filter(order => order?.status === "Reviewed");
+      const closedOrders = orderData.filter(order => order?.status === "Approved");
+  
+      setOngoingOrdersCount(ongoingOrders?.length);
+      setReviewedOrdersCount(reviewedOrders?.length);
+      setClosedOrdersCount(closedOrders?.length);
+    };
+  
     fetchEmail();
-  }, []);
+    countOrders();
+  }, [orderData]);
   return (
     <View style={styles.main}>
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={require("../../assets/user_3.jpg")} />
+        <Image
+          style={styles.image}
+          source={require("../../assets/user_3.jpg")}
+        />
         {/* <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
           Abena Dorcas
         </Text> */}
-        <Text
-          style={{ fontSize: 18, color: "white", fontWeight: "500" }}
-        >
-         {email}
+        <Text style={{ fontSize: 18, color: "white", fontWeight: "500" }}>
+          {email}
         </Text>
       </View>
 
       <View style={styles.middleSectionTextContainer}>
         <View style={styles.middleSectionText}>
           <Text style={styles.toptext}>Submitted</Text>
-          <Text style={styles.bottomtext}>28</Text>
+          <Text style={styles.bottomtext}>{ongoingOrdersCount}</Text>
         </View>
         <View style={styles.middleSectionText}>
           <Text style={styles.toptext}>Reviewed</Text>
-          <Text style={styles.bottomtext}>73</Text>
+          <Text style={styles.bottomtext}>{reviewedOrdersCount}</Text>
         </View>
         <View style={styles.middleSectionText}>
-        <Text style={styles.toptext}>Closed</Text>
-              <Text style={styles.bottomtext}>18</Text>
+          <Text style={styles.toptext}>Approved</Text>
+          <Text style={styles.bottomtext}>{closedOrdersCount}</Text>
         </View>
       </View>
     </View>
@@ -78,7 +94,7 @@ const styles = StyleSheet.create({
   },
   toptext: {
     fontSize: 16,
-    color:  Colors.white,
+    color: Colors.white,
     fontWeight: "bold",
   },
   bottomtext: {

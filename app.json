@@ -10,9 +10,12 @@
       "backgroundColor": "#FFFFFF"
     },
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jose9876543.meditrack"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +28,10 @@
         }
       },
       "package": "com.jose9876543.meditrack",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/logo12.png"
