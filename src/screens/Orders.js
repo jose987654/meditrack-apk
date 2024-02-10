@@ -264,7 +264,7 @@ const OrdersComponent = () => {
                 {orderData.map((order, index) => (
                   <>
                     <TouchableOpacity
-                      key={index}
+                      key={order.id}
                       style={[
                         styles.menuItem,
                         // selectedItem === index && { backgroundColor: 'lightgrey' },
