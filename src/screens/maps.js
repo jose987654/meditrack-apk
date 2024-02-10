@@ -5,7 +5,7 @@ import { Alert } from "react-native";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 // import { HospitalDataContext } from "../contexts/hospitalContext";
 // import { FlatList, TouchableOpacity } from "react-native";
-// import { SearchBar, Icon } from "react-native-elements";
+import { Icon } from "react-native-elements";
 // import { Picker } from "@react-native-picker/picker";
 import { collection, updateDoc, addDoc } from "firebase/firestore";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,7 +27,6 @@ import haversine from "haversine";
 import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as Location from "expo-location";
-
 
 const LOCATION_TASK_NAME = "background-location-task";
 
@@ -78,6 +77,7 @@ TaskManager.defineTask(
 );
 export default function ({ navigation }) {
   const swipeableRef = useRef(null);
+  const mapViewRef = useRef();
   const [tripStarted, setTripStarted] = useState(false);
   const { hospitalData } = useContext(HospitalDataContext);
   const { startPoint, destination, samples } = useContext(
@@ -117,7 +117,59 @@ export default function ({ navigation }) {
     getLocation();
   }, []);
   const [email, setEmail] = useState("");
+  const zoomIn = () => {
+    if (initialRegion) {
+      let newRegion = {
+        ...initialRegion,
+        latitudeDelta: initialRegion.latitudeDelta / 2,
+        longitudeDelta: initialRegion.longitudeDelta / 2,
+      };
+      mapViewRef.current.animateToRegion(newRegion, 500);
+    }
+  };
+  
 
+  const zoomOut = () => {
+    if (initialRegion) {
+      let newRegion = {
+        ...initialRegion,
+        latitudeDelta: initialRegion.latitudeDelta * 2,
+        longitudeDelta: initialRegion.longitudeDelta * 2,
+      };
+      mapViewRef.current.animateToRegion(newRegion, 500);
+    }
+  };
+  const ZoomInButton = ({ onPress }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        backgroundColor: "#f2f2f2",
+        padding: 10,
+        borderRadius: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        margin: 5,
+      }}
+    >
+      <Icon name={"add"} size={22} color={"black"} />
+    </TouchableOpacity>
+  );
+
+  const ZoomOutButton = ({ onPress }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        backgroundColor: "#f2f2f2",
+        padding: 10,
+        borderRadius: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        margin: 5,
+      }}
+    >
+      <Icon name={"remove"} size={22} color={"black"} />
+    </TouchableOpacity>
+  );
   useEffect(() => {
     const fetchEmail = async () => {
       const storedEmail = await AsyncStorage.getItem("user");
@@ -253,13 +305,16 @@ export default function ({ navigation }) {
           <>
             <View style={styles.container}>
               <MapView
+                ref={mapViewRef}
                 style={StyleSheet.absoluteFill}
                 initialRegion={initialRegion}
                 provider={PROVIDER_GOOGLE}
                 showsUserLocation
                 showsMyLocationButton
                 zoomEnabled={true}
+                onRegionChangeComplete={setInitialRegion}
               >
+               
                 {currentLocation && (
                   <Marker
                     coordinate={{
@@ -322,7 +377,21 @@ export default function ({ navigation }) {
                     )
                 )}
               </MapView>
+              
             </View>
+            <View
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    bottom: 80,
+                    alignItems: "center",
+                    backgroundColor: "grey",
+                    borderRadius: 5,
+                  }}
+                >
+                  <ZoomInButton onPress={zoomIn} />
+                  <ZoomOutButton onPress={zoomOut} />
+                </View>
             <Swipeable
               ref={swipeableRef}
               onSwipeableOpen={() => {
