@@ -1,33 +1,25 @@
-// CustomSplashScreen.js
+
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ImageBackground } from "react-native";
-// import { useFonts } from "expo-font";
-// import Svg, { Path } from "react-native-svg";
+import { View, Text, Image, ImageBackground, StyleSheet, Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
 const CustomSplashScreen = () => {
   const [showSplash, setShowSplash] = useState(true);
   const navigation = useNavigation();
-
+  const fadeIn = new Animated.Value(0);
   useEffect(() => {
     const checkLoginStatus = async () => {
-      // Check the stored login status
-      // const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
-
+      
       const isLoggedInString = await AsyncStorage.getItem("isLoggedIn");
-      const isLoggedIn = isLoggedInString === "true"; // Parse as boolean
+      const isLoggedIn = isLoggedInString === "true"; 
 
-      const timeout = setTimeout(() => {
-        // Navigate based on the login status
-        if (isLoggedIn) {
-          // navigation.navigate("HomeScreen");
-          navigation.navigate("MainTabs");
-          //   console.log("true");HomeScreenTab
-        } else {
-          //   console.log("false");
+      const timeout = setTimeout(() => {       
+        if (isLoggedIn) {          
+          navigation.navigate("MainTabs");        
+        } else {          
           navigation.navigate("Login");
         }
-
         setShowSplash(false);
       }, 2000);
 
@@ -36,56 +28,61 @@ const CustomSplashScreen = () => {
 
     checkLoginStatus();
   }, [navigation]);
-  //   const [loaded] = useFonts({
-  //     MeriendaOne: require("../assets/Fonts/MeriendaOne-Regular.ttf"),
-  //   });
-
-  //   if (!loaded) {
-  //     return null; // Render a loading component or nothing if fonts are not yet loaded
-  //   }
-
+  useEffect(() => {
+    // Fade-in animation for logo
+    Animated.timing(fadeIn, {
+      toValue: 1,
+      duration: 1500, // Adjust duration as needed
+      useNativeDriver: true,
+    }).start();
+  }, []);
+  
   return (
     showSplash && (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#fff",
-        }}
+      <View style={styles.container}>
+      {/* Background Gradient */}
+      <LinearGradient
+        colors={["rgba(109, 192, 255, 0.7)", // Lighter blue color with opacity
+        "rgba(174, 223, 255, 0.7)"]} // Updated transparent gradient colors
+        style={styles.background}
       >
-        <View style={{ flexDirection: "col", alignItems: "center" }}>
-          {/* <ImageBackground
-            source={require("../../assets/logo11.png")}
-            style={{ width: 230, height: 290, marginRight: 16 }}
-          /> */}
-          <Text
-            style={{
-              //   fontFamily: "Arial", // Change this to your preferred font family
-              fontStyle: "normal",
-              fontWeight: "bold", // Makes the text bold
-              fontSize: 60, // Increase the font size
-              color: "#3350FF", // Lighter red
-              textAlign: "center", // Center align text
-              lineHeight: 90, // Increase line height for better readability
-            }}
-          >
-            Medi-Track
-          </Text>
-        </View>
-        <View>
+        {/* App Name */}
+        <Text style={[styles.appName,]}>Medi-Track</Text>
+
+        {/* Animated Logo */}
+        <Animated.View style={{ opacity: fadeIn }}>
           <Image
             resizeMode="contain"
-            style={{
-              height: 220,
-              width: 220,
-            }}
+            style={styles.logo}
             source={require("../../assets/logo2.png")}
           />
-        </View>
-      </View>
+        </Animated.View>
+      </LinearGradient>
+    </View>
     )
   );
 };
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  appName: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 20,
+  },
+  logo: {
+    height: 120,
+    width: 120, borderRadius: 10,
+  },
+});
 export default CustomSplashScreen;

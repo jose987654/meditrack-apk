@@ -28,6 +28,10 @@ import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as Location from "expo-location";
 // import RNFS from "react-native-fs";
+// import * as FileSystem from 'expo-file-system';
+
+// const path = FileSystem.documentDirectory + "distanceData.json";
+
 const LOCATION_TASK_NAME = "background-location-task";
 // Define the path for the JSON file
 // const path = RNFS.DocumentDirectoryPath + "/distanceData.json";
