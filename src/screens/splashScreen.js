@@ -20,8 +20,9 @@ const CustomSplashScreen = () => {
       const timeout = setTimeout(() => {
         // Navigate based on the login status
         if (isLoggedIn) {
+          // navigation.navigate("HomeScreen");
           navigation.navigate("MainTabs");
-          //   console.log("true");
+          //   console.log("true");HomeScreenTab
         } else {
           //   console.log("false");
           navigation.navigate("Login");

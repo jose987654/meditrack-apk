@@ -77,9 +77,9 @@ export default function ({ navigation }) {
                 padding: 30,
               }}
             >
-              Forget Password
+              Forgot Password
             </Text>
-            <Text>Email</Text>
+            <Text>*Email Address Required*</Text>
             <TextInput
               containerStyle={{ marginTop: 15 }}
               placeholder="Enter your email"
@@ -126,7 +126,7 @@ export default function ({ navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View
+            {/* <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -149,7 +149,7 @@ export default function ({ navigation }) {
                   {isDarkmode ? "☀️ light theme" : "🌑 dark theme"}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         </ScrollView>
       </Layout>

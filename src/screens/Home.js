@@ -6,7 +6,7 @@ import { SelectedHospitalContext } from "../contexts/locationsContext";
 import { FlatList, TouchableOpacity } from "react-native";
 import { SearchBar, Icon } from "react-native-elements";
 import { Picker } from "@react-native-picker/picker";
-
+import { Card } from "react-native-elements";
 export default function ({ navigation }) {
   const { hospitalData, SamplesData, fetchData } =
     useContext(HospitalDataContext);
@@ -47,7 +47,9 @@ export default function ({ navigation }) {
   }, [hospitalData, fetchData]);
 
   return (
+  
     <Layout>
+      
       <View
         style={{ flex: 1, marginHorizontal: 20, backgroundColor: "#f5f5f5" }}
       >
@@ -56,21 +58,21 @@ export default function ({ navigation }) {
             style={{
               fontSize: 30,
               fontWeight: "bold",
-              marginBottom: 6,
-              color: "#333",
+              marginVertical: 6,
+              color: "#1D0776",
             }}
           >
             Hospital List
           </Text>
           <Text
             style={{
-              fontSize: 15,
+              fontSize: 18,
               fontWeight: "200",
               marginBottom: 2,
-              color: "#333",
+              color: "#1D0776",
             }}
           >
-            Please pick a starting Point.
+            * Please pick a starting Point.
           </Text>
           <SearchBar
             placeholder="Search Hospitals..."
@@ -97,7 +99,7 @@ export default function ({ navigation }) {
               <ActivityIndicator size={60} color="#3350FF" />
             </View>
           ) : (
-            <>
+            <><      >
               <View
                 style={{
                   borderWidth: 1,
@@ -113,6 +115,7 @@ export default function ({ navigation }) {
                       sortData(itemValue);
                     }
                   }}
+                  style={{ color: '#1D0776' }}
                 >
                   <Picker.Item label="Sort By :" value={null} />
                   <Picker.Item label="Sort by Name A-Z" value="AZ" />
@@ -124,15 +127,20 @@ export default function ({ navigation }) {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 10,
-                      backgroundColor: "#fff",
-                      padding: 10,
-                      borderRadius: 5,
-                    }}
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 10,
+                    backgroundColor: "#fff",
+                    padding: 10,
+                    borderRadius: 5,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                  }}
                     
                     onPress={() => {
                       Promise.all([
@@ -152,7 +160,7 @@ export default function ({ navigation }) {
                         name="hospital-o"
                         type="font-awesome"
                         size={24}
-                        color="#333"
+                        color="#1D0776"
                       />
                       <Text
                         style={{
@@ -171,12 +179,14 @@ export default function ({ navigation }) {
                       name="chevron-right"
                       type="font-awesome"
                       size={24}
-                      color="#333"
+                      color="#1D0776"
                     />
                   </TouchableOpacity>
                 )}
                 removeClippedSubviews={true}
+                // contentContainerStyle={{ margin: 4 }}
               />
+              </>
             </>
           )}
         </>

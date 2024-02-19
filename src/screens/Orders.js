@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import { Card } from "react-native-elements";
 import { doc, getDoc } from "firebase/firestore";
 import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
@@ -185,6 +186,12 @@ const OrdersComponent = () => {
   return (
     <>
       <View style={styles.container}>
+      <Card
+                  containerStyle={{
+                    borderRadius: 10,
+                    margin: 0,
+                  }}
+                >
         <View style={styles.container_title}>
           {/* <View style={styles.textContainer}>
             <Text style={styles.sectionTitle}>My Orders</Text>
@@ -220,10 +227,10 @@ const OrdersComponent = () => {
             fontWeight: "400",
             marginBottom: 10,
             color: "#1D0776",
-            textDecorationLine: "underline",
+            // textDecorationLine: "underline",
           }}
         >
-          * Pull Down or Press Refresh to get new Updates *
+          * Pull Down or Press Refresh to Update *
         </Text>
         {loading ? (
           <View
@@ -231,7 +238,7 @@ const OrdersComponent = () => {
               flex: 1,
               justifyContent: "center", // Center vertically
               alignItems: "center", // Center horizontally
-              backgroundColor: "#f5f5f5",
+              marginTop: 10,padding:40
             }}
           >
             <ActivityIndicator size={60} color="#3350FF" />
@@ -252,85 +259,92 @@ const OrdersComponent = () => {
               <>
                 <Text
                   style={{
-                    fontSize: 16,
-                    fontWeight: "400",
+                    fontSize: 22,
+                    fontWeight: "700",
                     marginBottom: 10,
                     color: "#000",
                     textDecorationLine: "underline",
                   }}
                 >
-                 Total : {orderData?.length} Trips.
+                  Total : {orderData?.length} Trips.
                 </Text>
-                {orderData.map((order, index) => (
-                  <>
-                    <TouchableOpacity
-                      key={order.id}
-                      style={[
-                        styles.menuItem,
-                        // selectedItem === index && { backgroundColor: 'lightgrey' },
-                      ]}
-                      onPress={async () => {
-                        // console.log("pressed");
-                        // await endTrip(order.id);
-                        await setOrder(order);
-                        // handleMenuItemClick(sortMenuItems()[index]);
-                        navigation.navigate("TripDetailScreen");
-                      }}
-                      activeOpacity={0.6}
-                    >
-                      <View style={styles.itemInfo}>
-                        <Text style={styles.itemName}>Trip {order.id}</Text>
-                        {/* Display other relevant information from the order */}
-                        {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
-                        <Text style={styles.itemDescription}>
-                          {new Date(order.time.seconds * 1000).toLocaleString()}
-                        </Text>
-                        {/* Add additional information as needed */}
-                        <View style={styles.priceContainer}>
-                          {/* Render other properties as needed */}
-                          <Text style={styles.itemPrice}>
-                            {order.Destination.name}
+               
+                  {orderData.map((order, index) => (
+                    <>
+                      <TouchableOpacity
+                        key={order.id}
+                        style={[
+                          styles.menuItem,
+                          // selectedItem === index && { backgroundColor: 'lightgrey' },
+                        ]}
+                        onPress={async () => {
+                          // console.log("pressed");
+                          // await endTrip(order.id);
+                          await setOrder(order);
+                          // handleMenuItemClick(sortMenuItems()[index]);
+                          navigation.navigate("TripDetailScreen");
+                        }}
+                        activeOpacity={0.6}
+                      >
+                        <View style={styles.itemInfo}>
+                          <Text style={styles.itemName}>Trip {order.id}</Text>
+                          {/* Display other relevant information from the order */}
+                          {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
+                          <Text style={styles.itemDescription}>
+                            {new Date(
+                              order.time.seconds * 1000
+                            ).toLocaleString()}
                           </Text>
-                        </View>
-                        <View style={styles.dots}>
-                          <View style={styles.priceContainer2}>
-                            <Text
-                              style={[
-                                styles.status,
-                                {
-                                  color:
-                                    order.status === "Closed" ? "green" : "red",
-                                },
-                              ]}
-                            >
-                              {order.status}
-                            </Text>
+                          {/* Add additional information as needed */}
+                          <View style={styles.priceContainer}>
                             {/* Render other properties as needed */}
-                            <View style={styles.priceContainer3}>
-                              {/* Render other properties as needed */}
-                              <Text
-                                style={styles.itemPrice2}
-                              >{`${order.quantity[0].quantity}`}</Text>
-                              {/* Render other properties as needed */}
-                              <Text style={styles.currency}>
-                                {order.quantity[0].item.name}
-                              </Text>
-                            </View>
+                            <Text style={styles.itemPrice}>
+                              {order.Destination.name}
+                            </Text>
                           </View>
-                          <Icon
-                            name="chevron-right"
-                            size={34}
-                            color="#1D0776"
-                          />
+                          <View style={styles.dots}>
+                            <View style={styles.priceContainer2}>
+                              <Text
+                                style={[
+                                  styles.status,
+                                  {
+                                    color:
+                                      order.status === "Closed"
+                                        ? "green"
+                                        : "red",
+                                  },
+                                ]}
+                              >
+                                {order.status}
+                              </Text>
+                              {/* Render other properties as needed */}
+                              <View style={styles.priceContainer3}>
+                                {/* Render other properties as needed */}
+                                <Text
+                                  style={styles.itemPrice2}
+                                >{`${order.quantity[0].quantity}`}</Text>
+                                {/* Render other properties as needed */}
+                                <Text style={styles.currency}>
+                                  {order.quantity[0].item.name}
+                                </Text>
+                              </View>
+                            </View>
+                            <Icon
+                              name="chevron-right"
+                              size={34}
+                              color="#1D0776"
+                            />
+                          </View>
                         </View>
-                      </View>
-                    </TouchableOpacity>
-                  </>
-                ))}
+                      </TouchableOpacity>
+                    </>
+                  ))}
+                
               </>
             )}
           </ScrollView>
         )}
+        </Card>
       </View>
     </>
   );
@@ -339,8 +353,8 @@ const OrdersComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
-    paddingLeft: 10,
+    paddingTop: 4,
+    // paddingLeft: 10,
     color: "#fff",
     //marginTop: 40,
   },
@@ -418,7 +432,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     right: 0,
-    padding: 10, // Adjust this value for spacing
+    paddingVertical: 10, // Adjust this value for spacing
   },
 
   itemPrice: {

@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-  Image,
+  Image,ImageBackground
 } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {
@@ -59,6 +59,10 @@ export default function ({ navigation }) {
   }
 
   return (
+    <ImageBackground
+    source={require("../../assets/bg.png")}
+    style={{ flex: 1,  }}
+  >
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <Layout>
         <ScrollView
@@ -187,6 +191,6 @@ export default function ({ navigation }) {
           </View>
         </ScrollView>
       </Layout>
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView></ImageBackground>
   );
 }

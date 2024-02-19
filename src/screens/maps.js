@@ -27,9 +27,10 @@ import haversine from "haversine";
 import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as Location from "expo-location";
-
+// import RNFS from "react-native-fs";
 const LOCATION_TASK_NAME = "background-location-task";
-
+// Define the path for the JSON file
+// const path = RNFS.DocumentDirectoryPath + "/distanceData.json";
 TaskManager.defineTask(
   LOCATION_TASK_NAME,
   async ({ data: { locations }, error }) => {
@@ -63,12 +64,52 @@ TaskManager.defineTask(
       // console.log("Updated Distance Array:", existingDistanceArray);
       // console.log("orderSnapshot :", JSON.stringify(existingData, null, 2));
       // const orderDoc = doc(db, "orders", orderId);
+      // RNFS.exists(path).then((exists) => {
+      //   if (!exists) {
+      //     // If the file doesn't exist, initialize it with an empty object
+      //     const initialData = {};
+
+      //     // Convert the initial data to a JSON string
+      //     const jsonString = JSON.stringify(initialData);
+
+      //     // Write the JSON string to the file
+      //     RNFS.writeFile(path, jsonString, "utf8")
+      //       .then(() => {
+      //         console.log("JSON file created successfully");
+      //       })
+      //       .catch((error) => {
+      //         console.error("Error creating JSON file:", error);
+      //       });
+      //   }
+      // });
       try {
         // Update the user's location in the database with the updated Distance array
-        await updateDoc(orderDocRef, {
-          Distance: existingDistanceArray,
-        });
+        // Define the tasks to be run concurrently
+        const tasks = [
+          // Task 1: Update the user's location in the database with the updated Distance array
+          updateDoc(orderDocRef, {
+            Distance: existingDistanceArray,
+          }),
+
+          // Task 2: Read existing data from the file
+          // RNFS.readFile(path, "utf8").then((existingFileData) => {
+          //   const existingJsonData = existingFileData
+          //     ? JSON.parse(existingFileData)
+          //     : [];
+
+          //   // Append new data
+          //   existingJsonData.push(existingDistanceArray);
+
+          //   // Write updated data back to the file
+          //   const jsonString = JSON.stringify(existingJsonData);
+          //   return RNFS.writeFile(path, jsonString, "utf8");
+          // }),
+        ];
+        // Run the tasks concurrently
+        await Promise.all(tasks);
+
         console.log("Distance array updated successfully");
+        // console.log("Distance array written to local file");
       } catch (error) {
         console.error("Error updating Distance array:", error);
       }
@@ -127,7 +168,6 @@ export default function ({ navigation }) {
       mapViewRef.current.animateToRegion(newRegion, 500);
     }
   };
-  
 
   const zoomOut = () => {
     if (initialRegion) {
@@ -314,7 +354,6 @@ export default function ({ navigation }) {
                 zoomEnabled={true}
                 onRegionChangeComplete={setInitialRegion}
               >
-               
                 {currentLocation && (
                   <Marker
                     coordinate={{
@@ -377,21 +416,20 @@ export default function ({ navigation }) {
                     )
                 )}
               </MapView>
-              
             </View>
             <View
-                  style={{
-                    position: "absolute",
-                    right: 10,
-                    bottom: 80,
-                    alignItems: "center",
-                    backgroundColor: "grey",
-                    borderRadius: 5,
-                  }}
-                >
-                  <ZoomInButton onPress={zoomIn} />
-                  <ZoomOutButton onPress={zoomOut} />
-                </View>
+              style={{
+                position: "absolute",
+                right: 10,
+                bottom: 80,
+                alignItems: "center",
+                backgroundColor: "grey",
+                borderRadius: 5,
+              }}
+            >
+              <ZoomInButton onPress={zoomIn} />
+              <ZoomOutButton onPress={zoomOut} />
+            </View>
             <Swipeable
               ref={swipeableRef}
               onSwipeableOpen={() => {

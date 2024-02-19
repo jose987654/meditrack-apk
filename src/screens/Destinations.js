@@ -40,7 +40,7 @@ export default function ({ navigation }) {
   return (
     <Layout>
       <TopNav
-        middleContent="Destinations"
+        middleContent="Stop Points"
         leftContent={
           <Ionicons
             name="chevron-back"
@@ -58,20 +58,20 @@ export default function ({ navigation }) {
             fontSize: 30,
             fontWeight: "bold",
             marginBottom: 6,
-            color: "#333",
+            color: "#1D0776",
           }}
         >
-          Destinations List
+          Stop Point List
         </Text>
         <Text
           style={{
             fontSize: 15,
             fontWeight: "200",
             marginBottom: 2,
-            color: "#333",
+            color: "#1D0776",
           }}
         >
-          Please pick a destination Point.
+          Please pick a stop Point.
         </Text>
         <SearchBar
           placeholder="Search Hospitals..."
@@ -101,6 +101,7 @@ export default function ({ navigation }) {
                 sortData(itemValue);
               }
             }}
+            style={{ color: '#1D0776' }}
           >
             <Picker.Item label="Sort By :" value={null} />
             <Picker.Item label="Sort by Name A-Z" value="AZ" />
@@ -112,15 +113,20 @@ export default function ({ navigation }) {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 10,
-                backgroundColor: "#fff",
-                padding: 10,
-                borderRadius: 5,
-              }}             
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 10,
+              backgroundColor: "#fff",
+              padding: 10,
+              borderRadius: 5,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}           
               onPress={() => {
                 Promise.all([
                   setDestination(item),
@@ -135,7 +141,7 @@ export default function ({ navigation }) {
                   name="hospital-o"
                   type="font-awesome"
                   size={24}
-                  color="#333"
+                  color="#1D0776"
                 />
                 <Text
                   style={{
@@ -154,7 +160,7 @@ export default function ({ navigation }) {
                 name="chevron-right"
                 type="font-awesome"
                 size={24}
-                color="#333"
+                color="#1D0776"
               />
             </TouchableOpacity>
           )}

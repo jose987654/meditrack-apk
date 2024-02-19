@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-  Image,
+  Image,ImageBackground
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { authInstance } from "../../firebaseConfig";
@@ -57,6 +57,10 @@ export default function ({ navigation }) {
   }
 
   return (
+    <ImageBackground
+        source={require("../../assets/bg.png")}
+        style={{ flex: 1,  }}
+      >
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <Layout>
         <ScrollView
@@ -99,10 +103,10 @@ export default function ({ navigation }) {
             >
               Login, Medi-Track
             </Text>
-            <Text>Email</Text>
+            <Text>Email Address</Text>
             <TextInput
               containerStyle={{ marginTop: 15 }}
-              placeholder="Enter your email"
+              placeholder="Enter your email-address..."
               value={email}
               autoCapitalize="none"
               autoCompleteType="off"
@@ -114,7 +118,7 @@ export default function ({ navigation }) {
             <Text style={{ marginTop: 15 }}>Password</Text>
             <TextInput
               containerStyle={{ marginTop: 15 }}
-              placeholder="Enter your password"
+              placeholder="Enter your password..."
               value={password}
               autoCapitalize="none"
               autoCompleteType="off"
@@ -172,7 +176,7 @@ export default function ({ navigation }) {
                 }}
               >
                 <Text size="md" fontWeight="bold">
-                  Forget password
+                  Forgot password
                 </Text>
               </TouchableOpacity>
             </View>
@@ -203,6 +207,6 @@ export default function ({ navigation }) {
           </View>
         </ScrollView>
       </Layout>
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView></ImageBackground>
   );
 }

@@ -41,7 +41,7 @@ export default function Middle() {
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
-          source={require("../../assets/user_3.jpg")}
+          source={require("../../assets/person2.png")}
         />
         {/* <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
           Abena Dorcas

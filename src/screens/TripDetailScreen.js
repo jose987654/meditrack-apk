@@ -14,7 +14,9 @@ import * as Location from "expo-location";
 import { updateDoc, addDoc } from "firebase/firestore";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { OrderContext } from "../contexts/orderContext";
+// import RNFS from "react-native-fs";
 const LOCATION_TASK_NAME = "background-location-task";
+// const path = RNFS.DocumentDirectoryPath + "/distanceData.json";
 
 const TripDetails = () => {
   const navigation = useNavigation();
@@ -23,7 +25,7 @@ const TripDetails = () => {
   // console.log("orderSnapshot :", JSON.stringify(order, null, 2));
 
   const endTrip = async (orderId) => {
-    await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+    // await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
     const orderDocRef = doc(db, "orders", orderId);
     // const orderSnapshot = await getDoc(orderDocRef);
     // console.log("snapshot :", orderSnapshot);
@@ -31,18 +33,34 @@ const TripDetails = () => {
 
     try {
       // Update the user's location in the database with the updated Distance array
-      await updateDoc(orderDocRef, {
-        status: "Closed",
-      });
+      // Define the tasks to be run concurrently
+      const tasks = [
+        // Task 1: Stop location updates
+        Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME),
+
+        // Task 2: Update the user's location in the database with the updated Distance array
+        updateDoc(orderDocRef, {
+          status: "Closed",
+        }),
+
+        // Task 3: Clear the JSON file by writing an empty object to it
+        // RNFS.writeFile(path, JSON.stringify({}), "utf8"),
+
+        // Task 4: Remove the order ID from AsyncStorage
+        AsyncStorage.removeItem("orderId"),
+      ];
+
+      // Run the tasks concurrently
+      await Promise.all(tasks);
       console.log(" updated successfully");
       showMessage({
         message: "Success!",
-        description: "You have successfully closed Trip in.",
+        description: "You have successfully closed Trip .",
         type: "success",
         duration: 1000,
       });
       // fetchEmail();
-      await AsyncStorage.removeItem("orderId");
+      // await AsyncStorage.removeItem("orderId");
       setTimeout(() => {
         navigation.navigate("OrderScreen");
       }, 2500);
