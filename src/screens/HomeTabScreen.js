@@ -56,7 +56,11 @@ export default function HomeScreenTab({ navigation }) {
             borderRadius: 10,
             margin: 0,
             marginBottom: 10,
-            paddingBottom: 30,
+            paddingBottom: 30,shadowColor: "#000",
+            shadowOffset: { width: 0, height: 180 },
+            shadowOpacity: 4.0,
+            shadowRadius: 10,
+            elevation: 10,
           }}
         >
           <Text

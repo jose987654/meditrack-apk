@@ -11,7 +11,8 @@ export default (props) => {
           ? isDarkmode
             ? themeColor.white100
             : themeColor.primary
-          : "rgb(143, 155, 179)",
+          : "#1D0776",
+         
         fontSize: 10,
       }}
     >
