@@ -49,6 +49,9 @@ TaskManager.defineTask(
       // Retrieve the order ID and current location from AsyncStorage
       const orderId = await AsyncStorage.getItem("orderId");
       // console.log("orderid :", orderId);
+      const storedEmail = await AsyncStorage.getItem("user");
+      const parsedUser = JSON.parse(storedEmail);
+      const userEmail= parsedUser?.email;
       const currentLocation = JSON.parse(
         await AsyncStorage.getItem("currentLocation")
       );
@@ -58,17 +61,22 @@ TaskManager.defineTask(
       const orderSnapshot = await getDoc(orderDocRef);
       // console.log("snapshot :", orderSnapshot);
       const existingData = orderSnapshot.data();
-      // console.log("existingData :", existingData);
-      // console.log("snapshot :", orderSnapshot);
-      const existingDistance = existingData.Distance || [];
+      console.log("existingData :", existingData);
+      console.log("snapshot :", orderSnapshot);
+      // const existingDistance = [];
+       const existingDistance = existingData.Distance || [];
       // const updatedDistance = [...existingDistance, currentLocation];
       const existingDistanceArray = Object.values(existingDistance);
 
       existingDistanceArray.push({ ...currentLocation });
       // console.log("Updated Distance Array:", existingDistanceArray);
       // console.log("orderSnapshot :", JSON.stringify(existingData, null, 2));
-      // const orderDoc = doc(db, "orders", orderId);
-
+      const orderDoc = doc(db, "orders", orderId);
+      const initialData = [{
+        location: currentLocation,
+        orderId: orderId,
+        email: userEmail
+      }];
       try {
         // Update the user's location in the database with the updated Distance array
         // Define the tasks to be run concurrently
@@ -78,10 +86,11 @@ TaskManager.defineTask(
             Distance: existingDistanceArray,
           }),
 
+
           FileSystem.getInfoAsync(path)
           .then(({ exists }) => {
             if (!exists) {
-              const initialData = [currentLocation];
+             
               const jsonString = JSON.stringify(initialData);
               return FileSystem.writeAsStringAsync(path, jsonString)
                 .then(() => {
@@ -94,16 +103,25 @@ TaskManager.defineTask(
         
                   if (!Array.isArray(existingJsonData)) {
                     console.error("Error: existing data is not an array");
-                    
-                    // Clear the contents of the file
-                    const emptyData = [];
-                    const jsonString = JSON.stringify(emptyData);
+  
+                    // Clear the contents of the file and add initial data
+                    const initialData = [{
+                      location: currentLocation,
+                      orderId: orderId,
+                      email: userEmail
+                    }];
+                    const jsonString = JSON.stringify(initialData);
                     return FileSystem.writeAsStringAsync(path, jsonString)
                       .then(() => {
-                        console.log("File contents cleared successfully");
+                        console.log("Initial data written to file successfully");
                       });
                   }
-        
+                  if (existingJsonData.length === 0) {
+                    existingJsonData.push({                     
+                      orderId: orderId,
+                      email: userEmail
+                    });
+                  }
                   // Append new data
                   existingJsonData.push(existingDistanceArray);
         

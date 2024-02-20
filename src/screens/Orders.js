@@ -147,7 +147,7 @@ const OrdersComponent = () => {
     // } else if (sortCriteria === "nameZA") {
     //   sortedItems.sort((a, b) => b.name.localeCompare(a.name));
     // }
-    console.log("items", sortedItems);
+    // console.log("items", sortedItems);
 
     return sortedItems;
   };

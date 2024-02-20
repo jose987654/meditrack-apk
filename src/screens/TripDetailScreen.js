@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
@@ -16,6 +22,7 @@ import FlashMessage, { showMessage } from "react-native-flash-message";
 import { OrderContext } from "../contexts/orderContext";
 // import RNFS from "react-native-fs";
 import * as FileSystem from "expo-file-system";
+import NetInfo from "@react-native-community/netinfo";
 
 const path = FileSystem.documentDirectory + "distanceData.json";
 
@@ -34,13 +41,32 @@ const TripDetails = () => {
     // const orderSnapshot = await getDoc(orderDocRef);
     // console.log("snapshot :", orderSnapshot);
     // const existingData = orderSnapshot.data();
+    NetInfo.fetch().then((state) => {
+      if (!state.isConnected) {
+        showMessage({
+          message: "No Internet Connection",
+          description: "Please check your internet connection .",
+          type: "danger",
+        });
+        Alert.alert(
+          "No Internet Connection",
+          "Please check your internet connection and try again.",
+          [{ text: "OK", onPress: () => {} }]
+        );
+      }
+    });
 
     try {
       // Update the user's location in the database with the updated Distance array
       // Define the tasks to be run concurrently
-    //   const fileContents = await FileSystem.readAsStringAsync(path);
-    // console.log("File contents before clearing:", fileContents);
-
+      const fileContents = await FileSystem.readAsStringAsync(path);
+      // console.log("File contents before clearing:", fileContents);
+      const data = JSON.parse(fileContents);
+      console.log("Data before clearing:", data);
+      const obj = {};
+      for (let i = 0; i < data.length; i++) {
+        obj[`item${i}`] = data[i];
+      }
       const tasks = [
         // Task 1: Stop location updates
         Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME),
@@ -49,9 +75,9 @@ const TripDetails = () => {
         updateDoc(orderDocRef, {
           status: "Closed",
         }),
-
+        addDoc(collection(db, "backupDistance"), obj),
         // Task 3: Clear the JSON file by writing an empty array to it
-    FileSystem.writeAsStringAsync(path, JSON.stringify([])),
+        FileSystem.writeAsStringAsync(path, JSON.stringify([])),
 
         // Task 4: Remove the order ID from AsyncStorage
         AsyncStorage.removeItem("orderId"),
@@ -111,31 +137,44 @@ const TripDetails = () => {
             {order?.StartPoint?.coordinatesData.map((data, index) => (
               <View key={index} style={styles.coordinatesContainer}>
                 <Text style={styles.coordinate}>
-                  Latitude: {data.source.latitude}
+                  Latitude: {data?.source?.latitude?.toFixed(6)}
                 </Text>
                 <Text style={styles.coordinate}>
-                  Longitude: {data.source.longitude}
+                  Longitude: {data?.source?.longitude?.toFixed(6)}
                 </Text>
               </View>
             ))}
           </View>
           <View style={styles.destinationContainer}>
             <Text style={styles.destinationTitle}>
-              Destination: {order?.Destination?.name}
+              Destination:{" "}
+              {order?.Destination?.name || order?.Destination?.Endpoint}
             </Text>
             <Text style={styles.destinationSubtitle}>
-              Location: {order?.Destination?.location}
+              Location:{" "}
+              {order?.Destination?.location || order?.Destination?.Endpoint}
             </Text>
-            {order?.Destination?.coordinatesData.map((data, index) => (
-              <View key={index} style={styles.coordinatesContainer}>
+            {order?.Destination?.coordinatesData &&
+              order?.Destination?.coordinatesData.map((data, index) => (
+                <View key={index} style={styles.coordinatesContainer}>
+                  <Text style={styles.coordinate}>
+                    Latitude: {data?.source?.latitude?.toFixed(6)}
+                  </Text>
+                  <Text style={styles.coordinate}>
+                    Longitude: {data?.source?.longitude?.toFixed(6)}
+                  </Text>
+                </View>
+              ))}
+            {order?.Destination?.source && (
+              <View style={styles.coordinatesContainer}>
                 <Text style={styles.coordinate}>
-                  Latitude: {data.source.latitude}
+                  Latitude: {order?.Destination?.source?.latitude?.toFixed(6)}
                 </Text>
                 <Text style={styles.coordinate}>
-                  Longitude: {data.source.longitude}
+                  Longitude: {order?.Destination?.source?.longitude?.toFixed(6)}
                 </Text>
               </View>
-            ))}
+            )}
           </View>
           <View style={styles.samplesContainer}>
             <Text style={styles.samplesTitle}>Samples delivered:</Text>
