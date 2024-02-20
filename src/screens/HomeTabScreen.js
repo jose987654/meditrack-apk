@@ -19,6 +19,8 @@ export default function HomeScreenTab({ navigation }) {
   // const { hospitalData, fetchData } = useContext(HospitalDataContext);
 
   // console.log("user", user);
+  // console.log("user:", JSON.stringify(user, null, 2));
+
   useEffect(() => {
     const fetchData = async () => {
       const currentTime = new Date();
@@ -48,92 +50,93 @@ export default function HomeScreenTab({ navigation }) {
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
         <Text style={styles.sectionTitle}>Medi-Track</Text>
-       
-      <View style={styles.container}>
-        
-        <Card
-          containerStyle={{
-            borderRadius: 10,
-            margin: 0,
-            marginBottom: 10,
-            paddingBottom: 30,shadowColor: "#000",
-            shadowOffset: { width: 0, height: 180 },
-            shadowOpacity: 4.0,
-            shadowRadius: 10,
-            elevation: 10,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 24,
-              fontWeight: "bold",
-              color: "#1D0776",
-              marginBottom: 8,
-            }}
-          >
-            {`Hello ${greeting}`}
-          </Text>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "600",
-              color: "#1D0776",
+
+        <View style={styles.container}>
+          <Card
+            containerStyle={{
+              borderRadius: 10,
+              margin: 0,
               marginBottom: 10,
+              paddingBottom: 30,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 180 },
+              shadowOpacity: 4.0,
+              shadowRadius: 10,
+              elevation: 10,
             }}
           >
-            {`${user?.email}`}
-          </Text>
-          <Text
-            style={{
-              fontSize: 19,
-              color: "#000",
-              marginBottom: 10,
-            }}
-          >
-            Welcome! Please choose an action from the options below:
-          </Text>
-        </Card>
-        <Text style={styles.sectionTitle}>My Options</Text>
-        <View style={styles.cardsContainer}>
-          {/* Top Row */}
-          <View style={styles.row}>
-            <ServiceCard
-              title="New Trip"
-              imageSource={require("../../assets/rider6.jpg")}
-              styleEffect={styles.cardImage1}
-              isNew={true}
-              icon={"bicycle"}
-              pageFunction={() => navigation.navigate("Home")}
-            />
-            <ServiceCard
-              title="My Trips"
-              imageSource={require("../../assets/trip2.png")}
-              styleEffect={styles.cardImage1}
-              isNew={true}
-              icon={"cart"}
-              pageFunction={() => navigation.navigate("OrderScreen")}
-            />
-          </View>
-          <View style={styles.row}>
-            <ServiceCard
-              title="Help"
-              imageSource={require("../../assets/help2.png")}
-              styleEffect={styles.cardImage1}
-              isNew={true}
-              icon={"help-circle"}
-              pageFunction={() => navigation.navigate("HelpScreen")}
-            />
-            <ServiceCard
-              title="Account"
-              imageSource={require("../../assets/person2.png")}
-              styleEffect={styles.cardImage1}
-              isNew={true}
-              icon={"person"}
-              pageFunction={() => navigation.navigate("Profile")}
-            />
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: "bold",
+                color: "#1D0776",
+                marginBottom: 8,
+              }}
+            >
+              {`Hello ${greeting}`}
+            </Text>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "600",
+                color: "#1D0776",
+                marginBottom: 10,
+              }}
+            >
+              {user?.displayName ? user.displayName : user?.email}
+            </Text>
+            <Text
+              style={{
+                fontSize: 19,
+                color: "#000",
+                marginBottom: 10,
+              }}
+            >
+              Welcome! Please choose an action from the options below:
+            </Text>
+          </Card>
+          <Text style={styles.sectionTitle}>My Options</Text>
+          <View style={styles.cardsContainer}>
+            {/* Top Row */}
+            <View style={styles.row}>
+              <ServiceCard
+                title="New Trip"
+                imageSource={require("../../assets/rider6.jpg")}
+                styleEffect={styles.cardImage1}
+                isNew={true}
+                icon={"bicycle"}
+                pageFunction={() => navigation.navigate("Home")}
+              />
+              <ServiceCard
+                title="My Trips"
+                imageSource={require("../../assets/trip2.png")}
+                styleEffect={styles.cardImage1}
+                isNew={true}
+                icon={"cart"}
+                pageFunction={() => navigation.navigate("OrderScreen")}
+              />
+            </View>
+            <View style={styles.row}>
+              <ServiceCard
+                title="Help"
+                imageSource={require("../../assets/help2.png")}
+                styleEffect={styles.cardImage1}
+                isNew={true}
+                icon={"help-circle"}
+                pageFunction={() => navigation.navigate("HelpScreen")}
+              />
+              <ServiceCard
+                title="Account"
+                imageSource={require("../../assets/person2.png")}
+                styleEffect={styles.cardImage1}
+                isNew={true}
+                icon={"person"}
+                pageFunction={() => navigation.navigate("Profile")}
+              />
+            </View>
           </View>
         </View>
-      </View></ImageBackground>
+      </ImageBackground>
     </Layout>
   );
 }

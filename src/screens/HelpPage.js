@@ -19,7 +19,7 @@ const HelpPage = () => {
   // };
 
   const handleSendFeedback = () => {
-    const email = "mwangiwanganga@gmail.com";
+    const email = "meditrack2023@gmail.com";
     const subject = "Feedback for Application";
     const body = "Please share your feedback here: ";
     const emailUrl = `mailto:${email}?subject=${subject}&body=${body}`;
@@ -29,7 +29,7 @@ const HelpPage = () => {
   };
 
   const handleReportProblem = () => {
-    const email = "mwangiwanganga@gmail.com";
+    const email = "meditrack2023@gmail.com";
     const subject = "Report Problem ";
     const body = "Please share your Problem here: ";
     const emailUrl = `mailto:${email}?subject=${subject}&body=${body}`;
@@ -39,7 +39,7 @@ const HelpPage = () => {
   };
 
   const handleCall = () => {
-    const phoneNumber = "+256708627386";
+    const phoneNumber = "+254792117211";
     const callUrl = `tel:${phoneNumber}`;
     Linking.openURL(callUrl).catch((err) =>
       console.error("An error occurred:", err)
@@ -47,7 +47,7 @@ const HelpPage = () => {
   };
 
   const handleText = () => {
-    const phoneNumber = "+256708627386";
+    const phoneNumber = "+254792117211";
     const textUrl = `sms:${phoneNumber}`;
     Linking.openURL(textUrl).catch((err) =>
       console.error("An error occurred:", err)

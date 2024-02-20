@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import MainHospitals from "../screens/mainHospitals";
 import { themeColor, useTheme } from "react-native-rapi-ui";
 import TabBarIcon from "../components/utils/TabBarIcon";
 import TabBarText from "../components/utils/TabBarText";
@@ -26,7 +26,8 @@ const MainStack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => (
   <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-    <HomeStack.Screen name="HomeScreen" component={HomeScreenTab} />
+    <HomeStack.Screen name="HomeScreen" component={HomeScreenTab} />    
+    <HomeStack.Screen name="MainHospitalScreen" component={MainHospitals} />
     <HomeStack.Screen name="Home" component={Home} />
     <HomeStack.Screen name="SamplesScreen" component={Samples} />
     <HomeStack.Screen name="DestinationScreen" component={Destinations} />
@@ -43,7 +44,8 @@ const HomeStackScreen = () => (
 const ProfileStack = createNativeStackNavigator();
 const ProfileStackScreen = () => (
   <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
-    <ProfileStack.Screen name="Profile" component={Profile} />
+    <ProfileStack.Screen name="Profile" component={Profile} />       
+    <ProfileStack.Screen name="MainHospitalScreen" component={MainHospitals} />
     <ProfileStack.Screen name="HomeScreen" component={HomeScreenTab} />
     <ProfileStack.Screen name="DestinationScreen" component={Destinations} />
     <ProfileStack.Screen name="SamplesScreen" component={Samples} />
@@ -59,7 +61,8 @@ const ProfileStackScreen = () => (
 const AboutStack = createNativeStackNavigator();
 const AboutStackScreen = () => (
   <AboutStack.Navigator screenOptions={{ headerShown: false }}>
-    <AboutStack.Screen name="OrderScreen" component={OrderScreen} />
+    <AboutStack.Screen name="OrderScreen" component={OrderScreen} />       
+    <AboutStack.Screen name="MainHospitalScreen" component={MainHospitals} />
     <AboutStack.Screen name="DestinationScreen" component={Destinations} />
     <AboutStack.Screen name="HomeScreen" component={HomeScreenTab} />
     <AboutStack.Screen name="SamplesScreen" component={Samples} />

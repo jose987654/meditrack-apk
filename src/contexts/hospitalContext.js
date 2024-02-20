@@ -7,6 +7,7 @@ export const HospitalDataContext = createContext();
 
 export const HospitalDataProvider = ({ children }) => {
   const [hospitalData, setHospitalData] = useState([]);
+  const [mainHospitalData, setMainHospitalData] = useState([]);
   const [SamplesData,setSamplesData] = useState([]);
   const [orderData, setOrderData] = useState([]);
   const fetchData = async () => {
@@ -64,18 +65,30 @@ export const HospitalDataProvider = ({ children }) => {
   
       return orders;
     };
+    const fetchMainHospitalData = async () => {
+      const q = query(collection(db, "main hospitals"));
+      const querySnapshot = await getDocs(q);
+    
+      const hospitals = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    
+      return hospitals;
+    };
   
-    const [hospitalData, orderData] = await Promise.all([fetchHospitalData(), fetchOrderData()]);
+    const [hospitalData, orderData, mainHospitalData] = await Promise.all([fetchHospitalData(), fetchOrderData(),fetchMainHospitalData()]);
   
     setHospitalData(hospitalData);
     setOrderData(orderData);
+    setMainHospitalData(mainHospitalData);
   }  
   useEffect(() => {    
     fetchData();
   }, []);
  
   return (
-    <HospitalDataContext.Provider value={{hospitalData,SamplesData,fetchData,orderData}}>
+    <HospitalDataContext.Provider value={{hospitalData,SamplesData,fetchData,orderData,mainHospitalData}}>
       {children}
     </HospitalDataContext.Provider>
   );

@@ -172,7 +172,8 @@ export default function ({ navigation }) {
       mapViewRef.current.animateToRegion(newRegion, 500);
     }
   };
-
+  // console.log("destination here",destination);
+  // console.log("destination:", JSON.stringify(destination, null, 2));
   const zoomOut = () => {
     if (initialRegion) {
       let newRegion = {
@@ -393,11 +394,33 @@ export default function ({ navigation }) {
                       title={`Destination: ${destination?.name}`}
                     />
                   )}
+                  {destination &&
+                  destination?.source && (
+                    <Marker
+                      coordinate={{
+                        latitude:
+                          destination?.source?.latitude,
+                        longitude:
+                          destination?.source?.longitude,
+                      }}
+                      title={`Destination: ${destination?.Endpoint}`}
+                    />
+                  )}
                 {startPoint?.coordinatesData?.[0]?.source &&
                   destination?.coordinatesData?.[0]?.source && (
                     <MapViewDirections
                       origin={startPoint.coordinatesData[0].source}
                       destination={destination.coordinatesData[0].source}
+                      apikey={GOOGLE_MAPS_APIKEY}
+                      strokeWidth={3}
+                      strokeColor="green"
+                    />
+                  )}
+                   {startPoint?.coordinatesData?.[0]?.source &&
+                  destination?.source && (
+                    <MapViewDirections
+                      origin={startPoint?.coordinatesData?.[0].source}
+                      destination={destination?.source}
                       apikey={GOOGLE_MAPS_APIKEY}
                       strokeWidth={3}
                       strokeColor="green"

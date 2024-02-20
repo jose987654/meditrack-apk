@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View } from "react-native";
+import { View,Button } from "react-native";
 import { Layout, Text, TopNav } from "react-native-rapi-ui";
 import { HospitalDataContext } from "../contexts/hospitalContext";
 import { FlatList, TouchableOpacity } from "react-native";
@@ -91,7 +91,7 @@ export default function ({ navigation }) {
             borderWidth: 1,
             borderColor: "#ddd",
             borderRadius: 5,
-            marginBottom: 10,
+            marginBottom: 2,
           }}
         >
           <Picker
@@ -108,6 +108,18 @@ export default function ({ navigation }) {
             <Picker.Item label="Sort by Name Z-A" value="ZA" />
           </Picker>
         </View>
+        <TouchableOpacity
+  style={{
+    backgroundColor: '#1D0776',
+    padding: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginVertical: 8,
+  }}
+  onPress={() => navigation.navigate('MainHospitalScreen')}
+>
+  <Text style={{ color: '#fff', fontSize: 18 }}> Main Hospitals</Text>
+</TouchableOpacity>
         <FlatList
           data={sorted ? sortedData : filteredData}
           keyExtractor={(item) => item.id}

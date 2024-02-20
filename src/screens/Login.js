@@ -4,7 +4,8 @@ import {
   TouchableOpacity,
   View,
   KeyboardAvoidingView,
-  Image,ImageBackground
+  Image,
+  ImageBackground,
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { authInstance } from "../../firebaseConfig";
@@ -12,7 +13,7 @@ import { authInstance } from "../../firebaseConfig";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { getDocs, collection, deleteDoc } from "firebase/firestore";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 import {
   Layout,
@@ -23,6 +24,8 @@ import {
   themeColor,
 } from "react-native-rapi-ui";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import Icon from "react-native-vector-icons/Ionicons"; // Import the icon component
+import { Input } from "react-native-elements";
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
@@ -30,23 +33,28 @@ export default function ({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   async function login() {
     setLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       // Signed in
       const user = userCredential.user;
-      await AsyncStorage.setItem('isLoggedIn', 'true'); // AsyncStorage only supports string values
+      await AsyncStorage.setItem("isLoggedIn", "true"); // AsyncStorage only supports string values
       // console.log(user); // Log user value
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      await AsyncStorage.setItem("user", JSON.stringify(user));
       showMessage({
         message: "Success!",
         description: "You have successfully Signed in.",
         type: "success",
         duration: 1000,
       });
-  
+
       navigation.navigate("MainTabs"); // Navigate to "MainTabs"
     } catch (error) {
       console.log(error);
@@ -58,137 +66,155 @@ export default function ({ navigation }) {
 
   return (
     <ImageBackground
-        source={require("../../assets/bg.png")}
-        style={{ flex: 1,  }}
-      >
-    <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
-      <Layout>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: isDarkmode ? "#17171E" : themeColor.white100,
+      source={require("../../assets/bg.png")}
+      style={{ flex: 1 }}
+    >
+      <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
+        <Layout>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
             }}
           >
-            <Image
-              resizeMode="contain"
-              style={{
-                height: 220,
-                width: 220,
-              }}
-              source={require("../../assets/login.png")}
-            />
-          </View>
-          <View
-            style={{
-              flex: 3,
-              paddingHorizontal: 20,
-              paddingBottom: 20,
-              backgroundColor: isDarkmode ? themeColor.dark : themeColor.white,
-            }}
-          >
-            <Text
-              fontWeight="bold"
-              style={{
-                alignSelf: "center",
-                padding: 30,
-              }}
-              size="h3"
-            >
-              Login, Medi-Track
-            </Text>
-            <Text>Email Address</Text>
-            <TextInput
-              containerStyle={{ marginTop: 15 }}
-              placeholder="Enter your email-address..."
-              value={email}
-              autoCapitalize="none"
-              autoCompleteType="off"
-              autoCorrect={false}
-              keyboardType="email-address"
-              onChangeText={(text) => setEmail(text)}
-            />
-
-            <Text style={{ marginTop: 15 }}>Password</Text>
-            <TextInput
-              containerStyle={{ marginTop: 15 }}
-              placeholder="Enter your password..."
-              value={password}
-              autoCapitalize="none"
-              autoCompleteType="off"
-              autoCorrect={false}
-              secureTextEntry={true}
-              onChangeText={(text) => setPassword(text)}
-            />
-            <Button
-              text={loading ? "Loading" : "Continue"}
-              onPress={() => {
-                login();
-              }}
-              style={{
-                marginTop: 20,
-              }}
-              disabled={loading}
-            />
-
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 15,
+                flex: 1,
                 justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: isDarkmode ? "#17171E" : themeColor.white100,
               }}
             >
-              <Text size="md">Don't have an account?</Text>
-              <TouchableOpacity
+              <Image
+                resizeMode="contain"
+                style={{
+                  height: 220,
+                  width: 220,
+                }}
+                source={require("../../assets/login.png")}
+              />
+            </View>
+            <View
+              style={{
+                flex: 3,
+                paddingHorizontal: 20,
+                paddingBottom: 20,
+                backgroundColor: isDarkmode
+                  ? themeColor.dark
+                  : themeColor.white,
+              }}
+            >
+              <Text
+                fontWeight="bold"
+                style={{
+                  alignSelf: "center",
+                  padding: 30,
+                }}
+                size="h3"
+              >
+                Login, Medi-Track
+              </Text>
+              <Text>Email Address</Text>
+              <TextInput
+                containerStyle={{ marginTop: 15 }}
+                placeholder="Enter your email-address..."
+                value={email}
+                autoCapitalize="none"
+                autoCompleteType="off"
+                autoCorrect={false}
+                keyboardType="email-address"
+                onChangeText={(text) => setEmail(text)}
+              />
+
+              <Text style={{ marginTop: 15 }}>Password</Text>
+              <Input
+                containerStyle={{ marginTop: 15, width: "105%", marginLeft: 0 }}
+                placeholder="Enter your password..."
+                value={password}
+                autoCapitalize="none"
+                autoCompleteType="off"
+                autoCorrect={false}
+                secureTextEntry={!isPasswordVisible}
+                onChangeText={(text) => setPassword(text)}
+                rightIcon={
+                  <TouchableOpacity
+                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                  >
+                    <Icon
+                      name={isPasswordVisible ? "eye" : "eye-off"}
+                      size={24}
+                      color="black"
+                    />
+                  </TouchableOpacity>
+                }
+                inputContainerStyle={{
+                  borderWidth: 1,
+                  borderColor: "#ccc",
+                  borderRadius: 10,
+                }}
+              />
+              <Button
+                text={loading ? "Loading" : "Continue"}
                 onPress={() => {
-                  navigation.navigate("Register");
+                  login();
+                }}
+                style={{
+                  marginTop: 20,
+                }}
+                disabled={loading}
+              />
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 15,
+                  justifyContent: "center",
                 }}
               >
-                <Text
-                  size="md"
-                  fontWeight="bold"
-                  style={{
-                    marginLeft: 5,
+                <Text size="md">Don't have an account?</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("Register");
                   }}
                 >
-                  Register here
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 10,
-                justifyContent: "center",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("ForgetPassword");
+                  <Text
+                    size="md"
+                    fontWeight="bold"
+                    style={{
+                      marginLeft: 5,
+                    }}
+                  >
+                    Register here
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 10,
+                  justifyContent: "center",
                 }}
               >
-                <Text size="md" fontWeight="bold">
-                  Forgot password
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 30,
-                justifyContent: "center",
-              }}
-            >
-              {/* <TouchableOpacity
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("ForgetPassword");
+                  }}
+                >
+                  <Text size="md" fontWeight="bold">
+                    Forgot password
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 30,
+                  justifyContent: "center",
+                }}
+              >
+                {/* <TouchableOpacity
                 onPress={() => {
                   isDarkmode ? setTheme("light") : setTheme("dark");
                 }}
@@ -203,10 +229,11 @@ export default function ({ navigation }) {
                   {isDarkmode ? "☀️ light theme" : "🌑 dark theme"}
                 </Text>
               </TouchableOpacity> */}
+              </View>
             </View>
-          </View>
-        </ScrollView>
-      </Layout>
-    </KeyboardAvoidingView></ImageBackground>
+          </ScrollView>
+        </Layout>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }

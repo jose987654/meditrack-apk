@@ -15,26 +15,34 @@ import {
   useTheme,
   themeColor,
 } from "react-native-rapi-ui";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
-  // const auth = getAuth();
+  const auth = getAuth();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function forget() {
     setLoading(true);
-    navigation.navigate("Login");
-    // await sendPasswordResetEmail(auth, email)
-    //   .then(function () {
-    //     setLoading(false);
-    //     navigation.navigate("Login");
-    //     alert("Your password reset has been sent to your email");
-    //   })
-    //   .catch(function (error) {
-    //     setLoading(false);
-    //     alert(error);
-    //   });
+    // navigation.navigate("Login");
+    await sendPasswordResetEmail(auth, email)
+      .then(function () {
+        setLoading(false);
+        navigation.navigate("Login");
+        // alert("Your password reset has been sent to your email");
+        showMessage({
+          message: "Success!",
+          description: "Your password reset has been sent to your email.",
+          type: "success",
+          duration: 1000,
+        });
+      })
+      .catch(function (error) {
+        setLoading(false);
+        alert(error);
+      });
   }
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>

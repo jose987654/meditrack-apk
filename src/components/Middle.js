@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
@@ -19,20 +19,26 @@ export default function Middle() {
       const storedEmail = await AsyncStorage.getItem("user");
       if (storedEmail !== null) {
         const user = JSON.parse(storedEmail);
-        setEmail(user.email);
+        setEmail(user);
       }
     };
-  
+
     const countOrders = () => {
-      const ongoingOrders = orderData.filter(order => order?.status === "Closed");
-      const reviewedOrders = orderData.filter(order => order?.status === "Reviewed");
-      const closedOrders = orderData.filter(order => order?.status === "Approved");
-  
+      const ongoingOrders = orderData.filter(
+        (order) => order?.status === "Closed"
+      );
+      const reviewedOrders = orderData.filter(
+        (order) => order?.status === "Reviewed"
+      );
+      const closedOrders = orderData.filter(
+        (order) => order?.status === "Approved"
+      );
+
       setOngoingOrdersCount(ongoingOrders?.length);
       setReviewedOrdersCount(reviewedOrders?.length);
       setClosedOrdersCount(closedOrders?.length);
     };
-  
+
     fetchEmail();
     countOrders();
   }, [orderData]);
@@ -43,11 +49,15 @@ export default function Middle() {
           style={styles.image}
           source={require("../../assets/person2.png")}
         />
-        {/* <Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
-          Abena Dorcas
-        </Text> */}
+        
+        {email?.displayName ? (
+          <Text style={{ fontSize: 18, color: "white", fontWeight: "500" }}>
+            {email?.displayName}
+          </Text>
+        ) : null}
+
         <Text style={{ fontSize: 18, color: "white", fontWeight: "500" }}>
-          {email}
+          {email?.email}
         </Text>
       </View>
 
