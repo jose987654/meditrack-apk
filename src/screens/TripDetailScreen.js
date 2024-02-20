@@ -15,6 +15,10 @@ import { updateDoc, addDoc } from "firebase/firestore";
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { OrderContext } from "../contexts/orderContext";
 // import RNFS from "react-native-fs";
+import * as FileSystem from "expo-file-system";
+
+const path = FileSystem.documentDirectory + "distanceData.json";
+
 const LOCATION_TASK_NAME = "background-location-task";
 // const path = RNFS.DocumentDirectoryPath + "/distanceData.json";
 
@@ -34,6 +38,9 @@ const TripDetails = () => {
     try {
       // Update the user's location in the database with the updated Distance array
       // Define the tasks to be run concurrently
+    //   const fileContents = await FileSystem.readAsStringAsync(path);
+    // console.log("File contents before clearing:", fileContents);
+
       const tasks = [
         // Task 1: Stop location updates
         Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME),
@@ -43,8 +50,8 @@ const TripDetails = () => {
           status: "Closed",
         }),
 
-        // Task 3: Clear the JSON file by writing an empty object to it
-        // RNFS.writeFile(path, JSON.stringify({}), "utf8"),
+        // Task 3: Clear the JSON file by writing an empty array to it
+    FileSystem.writeAsStringAsync(path, JSON.stringify([])),
 
         // Task 4: Remove the order ID from AsyncStorage
         AsyncStorage.removeItem("orderId"),

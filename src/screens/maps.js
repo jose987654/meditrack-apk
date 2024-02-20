@@ -28,9 +28,9 @@ import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as Location from "expo-location";
 // import RNFS from "react-native-fs";
-// import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 
-// const path = FileSystem.documentDirectory + "distanceData.json";
+const path = FileSystem.documentDirectory + "distanceData.json";
 
 const LOCATION_TASK_NAME = "background-location-task";
 // Define the path for the JSON file
@@ -68,24 +68,7 @@ TaskManager.defineTask(
       // console.log("Updated Distance Array:", existingDistanceArray);
       // console.log("orderSnapshot :", JSON.stringify(existingData, null, 2));
       // const orderDoc = doc(db, "orders", orderId);
-      // RNFS.exists(path).then((exists) => {
-      //   if (!exists) {
-      //     // If the file doesn't exist, initialize it with an empty object
-      //     const initialData = {};
 
-      //     // Convert the initial data to a JSON string
-      //     const jsonString = JSON.stringify(initialData);
-
-      //     // Write the JSON string to the file
-      //     RNFS.writeFile(path, jsonString, "utf8")
-      //       .then(() => {
-      //         console.log("JSON file created successfully");
-      //       })
-      //       .catch((error) => {
-      //         console.error("Error creating JSON file:", error);
-      //       });
-      //   }
-      // });
       try {
         // Update the user's location in the database with the updated Distance array
         // Define the tasks to be run concurrently
@@ -95,19 +78,44 @@ TaskManager.defineTask(
             Distance: existingDistanceArray,
           }),
 
-          // Task 2: Read existing data from the file
-          // RNFS.readFile(path, "utf8").then((existingFileData) => {
-          //   const existingJsonData = existingFileData
-          //     ? JSON.parse(existingFileData)
-          //     : [];
-
-          //   // Append new data
-          //   existingJsonData.push(existingDistanceArray);
-
-          //   // Write updated data back to the file
-          //   const jsonString = JSON.stringify(existingJsonData);
-          //   return RNFS.writeFile(path, jsonString, "utf8");
-          // }),
+          FileSystem.getInfoAsync(path)
+          .then(({ exists }) => {
+            if (!exists) {
+              const initialData = [currentLocation];
+              const jsonString = JSON.stringify(initialData);
+              return FileSystem.writeAsStringAsync(path, jsonString)
+                .then(() => {
+                  console.log("JSON file created successfully");
+                });
+            } else {
+              return FileSystem.readAsStringAsync(path)
+                .then((existingFileData) => {
+                  const existingJsonData = existingFileData ? JSON.parse(existingFileData) : [];
+        
+                  if (!Array.isArray(existingJsonData)) {
+                    console.error("Error: existing data is not an array");
+                    
+                    // Clear the contents of the file
+                    const emptyData = [];
+                    const jsonString = JSON.stringify(emptyData);
+                    return FileSystem.writeAsStringAsync(path, jsonString)
+                      .then(() => {
+                        console.log("File contents cleared successfully");
+                      });
+                  }
+        
+                  // Append new data
+                  existingJsonData.push(existingDistanceArray);
+        
+                  // Write updated data back to the file
+                  const jsonString = JSON.stringify(existingJsonData);
+                  return FileSystem.writeAsStringAsync(path, jsonString)
+                    .then(() => {
+                      console.log("Data written to JSON file successfully");
+                    });
+                });
+            }
+          }),
         ];
         // Run the tasks concurrently
         await Promise.all(tasks);
@@ -304,6 +312,7 @@ export default function ({ navigation }) {
           distanceInterval: 1, // Or every meter
           // showsBackgroundLocationIndicator: true,
         });
+        await FileSystem.writeAsStringAsync(path, JSON.stringify([])),
 
         // Save the order ID and current location to AsyncStorage for use in the background task
         await AsyncStorage.setItem("orderId", docRef.id);
@@ -394,18 +403,15 @@ export default function ({ navigation }) {
                       title={`Destination: ${destination?.name}`}
                     />
                   )}
-                  {destination &&
-                  destination?.source && (
-                    <Marker
-                      coordinate={{
-                        latitude:
-                          destination?.source?.latitude,
-                        longitude:
-                          destination?.source?.longitude,
-                      }}
-                      title={`Destination: ${destination?.Endpoint}`}
-                    />
-                  )}
+                {destination && destination?.source && (
+                  <Marker
+                    coordinate={{
+                      latitude: destination?.source?.latitude,
+                      longitude: destination?.source?.longitude,
+                    }}
+                    title={`Destination: ${destination?.Endpoint}`}
+                  />
+                )}
                 {startPoint?.coordinatesData?.[0]?.source &&
                   destination?.coordinatesData?.[0]?.source && (
                     <MapViewDirections
@@ -416,7 +422,7 @@ export default function ({ navigation }) {
                       strokeColor="green"
                     />
                   )}
-                   {startPoint?.coordinatesData?.[0]?.source &&
+                {startPoint?.coordinatesData?.[0]?.source &&
                   destination?.source && (
                     <MapViewDirections
                       origin={startPoint?.coordinatesData?.[0].source}
