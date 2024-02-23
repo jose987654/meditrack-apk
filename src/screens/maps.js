@@ -39,24 +39,20 @@ TaskManager.defineTask(
   LOCATION_TASK_NAME,
   async ({ data: { locations }, error }) => {
     if (error) {
-      // Error occurred - check `error.message` for more details.
       return;
     }
     if (locations) {
-      // locations is an array of location objects
       const location = locations[0];
-
-      // Retrieve the order ID and current location from AsyncStorage
       const orderId = await AsyncStorage.getItem("orderId");
-      // console.log("orderid :", orderId);
       const storedEmail = await AsyncStorage.getItem("user");
       const parsedUser = JSON.parse(storedEmail);
-      const userEmail= parsedUser?.email;
-      const currentLocation = JSON.parse(
+      const userEmail = parsedUser?.email;
+      const currentUserLocation = JSON.parse(
         await AsyncStorage.getItem("currentLocation")
       );
-      // console.log("currentLocation :", currentLocation);
-      // Update the user's location in the database
+      let userlocation = await Location.getCurrentPositionAsync({});
+      const currentLocation = userlocation?.coords;
+      console.log("currentLocation :", currentLocation);
       const orderDocRef = doc(db, "orders", orderId);
       const orderSnapshot = await getDoc(orderDocRef);
       // console.log("snapshot :", orderSnapshot);
@@ -64,21 +60,20 @@ TaskManager.defineTask(
       console.log("existingData :", existingData);
       console.log("snapshot :", orderSnapshot);
       // const existingDistance = [];
-       const existingDistance = existingData.Distance || [];
+      const existingDistance = existingData.Distance || [];
       // const updatedDistance = [...existingDistance, currentLocation];
       const existingDistanceArray = Object.values(existingDistance);
 
       existingDistanceArray.push({ ...currentLocation });
-      // console.log("Updated Distance Array:", existingDistanceArray);
-      // console.log("orderSnapshot :", JSON.stringify(existingData, null, 2));
       const orderDoc = doc(db, "orders", orderId);
-      const initialData = [{
-        location: currentLocation,
-        orderId: orderId,
-        email: userEmail
-      }];
+      const initialData = [
+        {
+          location: currentUserLocation,
+          orderId: orderId,
+          email: userEmail,
+        },
+      ];
       try {
-        // Update the user's location in the database with the updated Distance array
         // Define the tasks to be run concurrently
         const tasks = [
           // Task 1: Update the user's location in the database with the updated Distance array
@@ -86,52 +81,59 @@ TaskManager.defineTask(
             Distance: existingDistanceArray,
           }),
 
-
-          FileSystem.getInfoAsync(path)
-          .then(({ exists }) => {
+          FileSystem.getInfoAsync(path).then(({ exists }) => {
             if (!exists) {
-             
               const jsonString = JSON.stringify(initialData);
-              return FileSystem.writeAsStringAsync(path, jsonString)
-                .then(() => {
+              return FileSystem.writeAsStringAsync(path, jsonString).then(
+                () => {
                   console.log("JSON file created successfully");
-                });
+                }
+              );
             } else {
-              return FileSystem.readAsStringAsync(path)
-                .then((existingFileData) => {
-                  const existingJsonData = existingFileData ? JSON.parse(existingFileData) : [];
-        
+              return FileSystem.readAsStringAsync(path).then(
+                (existingFileData) => {
+                  const existingJsonData = existingFileData
+                    ? JSON.parse(existingFileData)
+                    : [];
+
                   if (!Array.isArray(existingJsonData)) {
                     console.error("Error: existing data is not an array");
-  
+
                     // Clear the contents of the file and add initial data
-                    const initialData = [{
-                      location: currentLocation,
-                      orderId: orderId,
-                      email: userEmail
-                    }];
+                    const initialData = [
+                      {
+                        location: currentUserLocation,
+                        orderId: orderId,
+                        email: userEmail,
+                      },
+                    ];
                     const jsonString = JSON.stringify(initialData);
-                    return FileSystem.writeAsStringAsync(path, jsonString)
-                      .then(() => {
-                        console.log("Initial data written to file successfully");
-                      });
+                    return FileSystem.writeAsStringAsync(path, jsonString).then(
+                      () => {
+                        console.log(
+                          "Initial data written to file successfully"
+                        );
+                      }
+                    );
                   }
                   if (existingJsonData.length === 0) {
-                    existingJsonData.push({                     
+                    existingJsonData.push({
                       orderId: orderId,
-                      email: userEmail
+                      email: userEmail,
                     });
                   }
                   // Append new data
                   existingJsonData.push(existingDistanceArray);
-        
+
                   // Write updated data back to the file
                   const jsonString = JSON.stringify(existingJsonData);
-                  return FileSystem.writeAsStringAsync(path, jsonString)
-                    .then(() => {
+                  return FileSystem.writeAsStringAsync(path, jsonString).then(
+                    () => {
                       console.log("Data written to JSON file successfully");
-                    });
-                });
+                    }
+                  );
+                }
+              );
             }
           }),
         ];
@@ -176,10 +178,10 @@ export default function ({ navigation }) {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setCurrentLocation(location.coords);
+      setCurrentLocation(location?.coords);
       setInitialRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location?.coords?.latitude,
+        longitude: location?.coords?.longitude,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
@@ -322,17 +324,13 @@ export default function ({ navigation }) {
       try {
         const docRef = await addDoc(collection(db, "orders"), orderData);
         console.log("Document written with ID: ", docRef.id);
+        await FileSystem.writeAsStringAsync(path, JSON.stringify([]));
 
-        // Start the background location updates
         await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
           accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 30000, // Update every second
-          distanceInterval: 1, // Or every meter
-          // showsBackgroundLocationIndicator: true,
+          timeInterval: 30000,
+          distanceInterval: 1,
         });
-        await FileSystem.writeAsStringAsync(path, JSON.stringify([])),
-
-        // Save the order ID and current location to AsyncStorage for use in the background task
         await AsyncStorage.setItem("orderId", docRef.id);
         await AsyncStorage.setItem(
           "currentLocation",
