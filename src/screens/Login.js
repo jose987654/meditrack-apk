@@ -64,11 +64,7 @@ export default function ({ navigation }) {
     setLoading(false);
   }
 
-  return (
-    <ImageBackground
-      source={require("../../assets/bg.png")}
-      style={{ flex: 1 }}
-    >
+  return (  
       <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
         <Layout>
           <ScrollView
@@ -234,6 +230,6 @@ export default function ({ navigation }) {
           </ScrollView>
         </Layout>
       </KeyboardAvoidingView>
-    </ImageBackground>
+    
   );
 }

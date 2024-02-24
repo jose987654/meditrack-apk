@@ -186,17 +186,20 @@ const OrdersComponent = () => {
   return (
     <>
       <View style={styles.container}>
-      <Card
-                  containerStyle={{
-                    borderRadius: 10,
-                    margin: 0,
-                  }}
-                >
-        <View style={styles.container_title}>
-          {/* <View style={styles.textContainer}>
+        <Card
+          containerStyle={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+            padding: 20,
+          }}
+        >
+          <View style={styles.container_title}>
+            {/* <View style={styles.textContainer}>
             <Text style={styles.sectionTitle}>My Orders</Text>
           </View> */}
-          {/* <TouchableOpacity
+            {/* <TouchableOpacity
             style={styles.cartIcon}
             onPress={() => {
               navigation.navigate("CartScreen");
@@ -207,68 +210,72 @@ const OrdersComponent = () => {
               <Text style={styles.cartItemCountText}>{cartLength}</Text>
             </View>
           </TouchableOpacity> */}
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 8,
-          }}
-        >
-          <Text style={styles.sectionTitle}>Rider Activity</Text>
-          <View style={{ marginRight: 50 }}>
-            <Button title="Refresh" onPress={fetchEmail} color="#3350FF" />
           </View>
-        </View>
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: "400",
-            marginBottom: 10,
-            color: "#1D0776",
-            // textDecorationLine: "underline",
-          }}
-        >
-          * Pull Down or Press Refresh to Update *
-        </Text>
-        {loading ? (
           <View
             style={{
-              flex: 1,
-              justifyContent: "center", // Center vertically
-              alignItems: "center", // Center horizontally
-              marginTop: 10,padding:40
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 8,
             }}
           >
-            <ActivityIndicator size={60} color="#3350FF" />
+            <Text style={styles.sectionTitle}>Rider Activity</Text>
+            <View style={{ marginRight: 50 }}>
+              <Button title="Refresh" onPress={fetchEmail} color="#3350FF" />
+            </View>
           </View>
-        ) : (
-          <ScrollView
-            contentContainerStyle={styles.menuList}
-            ref={scrollTimeout}
-            onScroll={handleScroll}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={fetchEmail} />
-            }
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: "400",
+              marginBottom: 10,
+              color: "#1D0776",
+              // textDecorationLine: "underline",
+            }}
           >
-            {/* <Button title="Refresh" onPress={fetchEmail} /> */}
-            {orderData.length === 0 ? (
-              <Text style={styles.itemName}>You have no Trips yet.</Text>
-            ) : (
-              <>
-                <Text
-                  style={{
-                    fontSize: 22,
-                    fontWeight: "700",
-                    marginBottom: 10,
-                    color: "#000",
-                    textDecorationLine: "underline",
-                  }}
-                >
-                  Total : {orderData?.length} Trips.
-                </Text>
-               
+            * Pull Down or Press Refresh to Update *
+          </Text>
+          {loading ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center", // Center vertically
+                alignItems: "center", // Center horizontally
+                marginTop: 10,
+                padding: 40,
+              }}
+            >
+              <ActivityIndicator size={60} color="#3350FF" />
+            </View>
+          ) : (
+            <ScrollView
+              contentContainerStyle={styles.menuList}
+              ref={scrollTimeout}
+              onScroll={handleScroll}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={fetchEmail}
+                />
+              }
+            >
+              {/* <Button title="Refresh" onPress={fetchEmail} /> */}
+              {orderData.length === 0 ? (
+                <Text style={styles.itemName}>You have no Trips yet.</Text>
+              ) : (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 22,
+                      fontWeight: "700",
+                      marginBottom: 10,
+                      color: "#000",
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    Total : {orderData?.length} Trips.
+                  </Text>
+
                   {orderData.map((order, index) => (
                     <>
                       <TouchableOpacity
@@ -339,11 +346,10 @@ const OrdersComponent = () => {
                       </TouchableOpacity>
                     </>
                   ))}
-                
-              </>
-            )}
-          </ScrollView>
-        )}
+                </>
+              )}
+            </ScrollView>
+          )}
         </Card>
       </View>
     </>
