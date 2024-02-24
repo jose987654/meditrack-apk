@@ -34,6 +34,41 @@ const TripDetails = () => {
   const { order, setOrder } = useContext(OrderContext);
   // console.log("order data stored here:", order);
   // console.log("orderSnapshot :", JSON.stringify(order, null, 2));
+  const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+  let totalDistance = 0;
+  if (order?.status === "Closed") {
+    // let totalDistance = 0;
+    for (let i = 0; i < order?.Distance.length - 1; i++) {
+      const point1 = order?.Distance[i];
+      const point2 = order?.Distance[i + 1];
+      totalDistance += getDistanceFromLatLonInKm(
+        point1.latitude,
+        point1.longitude,
+        point2.latitude,
+        point2.longitude
+      );
+    }
+    console.log("Total Distance:", totalDistance);
+  } else {
+    console.log("Order is not closed yet!");
+  }
 
   const endTrip = async (orderId) => {
     // await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
@@ -62,7 +97,7 @@ const TripDetails = () => {
       const fileContents = await FileSystem.readAsStringAsync(path);
       // console.log("File contents before clearing:", fileContents);
       const data = JSON.parse(fileContents);
-      console.log("Data before clearing:", data);
+      // console.log("Data before clearing:", data);
       const obj = {};
       for (let i = 0; i < data.length; i++) {
         obj[`item${i}`] = data[i];
@@ -85,7 +120,7 @@ const TripDetails = () => {
 
       // Run the tasks concurrently
       await Promise.all(tasks);
-      console.log(" updated successfully");
+      // console.log(" updated successfully");
       showMessage({
         message: "Success!",
         description: "You have successfully closed Trip .",
@@ -98,7 +133,7 @@ const TripDetails = () => {
         navigation.navigate("OrderScreen");
       }, 2500);
     } catch (error) {
-      console.error(" error:", error);
+      // console.error(" error:", error);
       alert(errorMessage);
     }
     // ...
@@ -182,7 +217,14 @@ const TripDetails = () => {
               <View key={index} style={styles.sampleItemContainer}>
                 <Text style={styles.sampleItemName}>{data.item.name}</Text>
                 <Text style={styles.sampleItemQuantity}>
-                  Quantity: {data.quantity}
+                  Quantity:{" "}
+                  <Text
+                    style={{
+                      color: "green",
+                    }}
+                  >
+                    {data.quantity}
+                  </Text>
                 </Text>
               </View>
             ))}
@@ -197,7 +239,36 @@ const TripDetails = () => {
               {order?.status}
             </Text>
           </Text>
-
+          {order?.status === "Closed" && (
+            <Text style={styles.price}>
+              Trip Distance (meters) :{" "}
+              <Text
+                style={{
+                  color: "green",
+                }}
+              >
+                {(Math.ceil(totalDistance * 100) / 100).toLocaleString(
+                  "en-US",
+                  { maximumFractionDigits: 2 }
+                )}
+                m
+              </Text>
+            </Text>
+          )}
+           {order?.status === "Closed" && (
+            <Text style={styles.price}>
+              Trip Distance (kilometers) :{" "}
+              <Text
+                style={{
+                  color: "green",
+                }}
+              >
+               {(Math.ceil((totalDistance / 1000) * 100) / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} km
+          
+                
+              </Text>
+            </Text>
+          )}
           {/* Add to Cart button */}
           {order?.status === "Ongoing" && (
             <TouchableOpacity

@@ -27,6 +27,9 @@ import * as Location from "expo-location";
 import { OrderContext } from "../contexts/orderContext";
 import { updateDoc, addDoc } from "firebase/firestore";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+// import { showMessage } from "react-native-flash-message";
+import NetInfo from "@react-native-community/netinfo";
+import { Alert } from "react-native";
 const LOCATION_TASK_NAME = "background-location-task";
 
 const OrdersComponent = () => {
@@ -75,6 +78,22 @@ const OrdersComponent = () => {
   const fetchEmail = async () => {
     setRefreshing(true);
     setLoading(true);
+    const state = await NetInfo.fetch();
+    if (!state.isConnected) {
+      showMessage({
+        message: "No Internet Connection",
+        description: "Please check your internet connection.",
+        type: "danger",
+      });
+      Alert.alert(
+        "No Internet Connection",
+        "Please check your internet connection and try again.",
+        [{ text: "OK", onPress: () => {} }]
+      );
+      setRefreshing(false);
+      setLoading(false);
+      return;
+    }
 
     const storedEmail = await AsyncStorage.getItem("user");
     // console.log("user",storedEmail)
@@ -189,10 +208,11 @@ const OrdersComponent = () => {
         <Card
           containerStyle={{
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+            margin: 1,
+            // justifyContent: "center",
+            // alignItems: "center",
             borderRadius: 10,
-            padding: 20,
+            // paddingHorizontal: 20,
           }}
         >
           <View style={styles.container_title}>
@@ -241,7 +261,7 @@ const OrdersComponent = () => {
                 flex: 1,
                 justifyContent: "center", // Center vertically
                 alignItems: "center", // Center horizontally
-                marginTop: 10,
+                marginTop: 80,
                 padding: 40,
               }}
             >
@@ -252,6 +272,7 @@ const OrdersComponent = () => {
               contentContainerStyle={styles.menuList}
               ref={scrollTimeout}
               onScroll={handleScroll}
+              showsVerticalScrollIndicator={true} 
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
@@ -277,74 +298,68 @@ const OrdersComponent = () => {
                   </Text>
 
                   {orderData.map((order, index) => (
-                    <>
-                      <TouchableOpacity
-                        key={order.id}
-                        style={[
-                          styles.menuItem,
-                          // selectedItem === index && { backgroundColor: 'lightgrey' },
-                        ]}
-                        onPress={async () => {
-                          // console.log("pressed");
-                          // await endTrip(order.id);
-                          await setOrder(order);
-                          // handleMenuItemClick(sortMenuItems()[index]);
-                          navigation.navigate("TripDetailScreen");
-                        }}
-                        activeOpacity={0.6}
-                      >
-                        <View style={styles.itemInfo}>
-                          <Text style={styles.itemName}>Trip {order.id}</Text>
-                          {/* Display other relevant information from the order */}
-                          {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
-                          <Text style={styles.itemDescription}>
-                            {new Date(
-                              order.time.seconds * 1000
-                            ).toLocaleString()}
+                    <TouchableOpacity
+                      key={order.id}
+                      style={[
+                        styles.menuItem,
+                        // selectedItem === index && { backgroundColor: 'lightgrey' },
+                      ]}
+                      onPress={async () => {
+                        // console.log("pressed");
+                        // await endTrip(order.id);
+                        await setOrder(order);
+                        // handleMenuItemClick(sortMenuItems()[index]);
+                        navigation.navigate("TripDetailScreen");
+                      }}
+                      activeOpacity={0.6}
+                    >
+                      <View style={styles.itemInfo}>
+                        <Text style={styles.itemName}>Trip {order.id}</Text>
+                        {/* Display other relevant information from the order */}
+                        {/* <Text style={styles.itemDescription}>{order.status}</Text> */}
+                        <Text style={styles.itemDescription}>
+                          {new Date(order.time.seconds * 1000).toLocaleString()}
+                        </Text>
+                        {/* Add additional information as needed */}
+                        <View style={styles.priceContainer}>
+                          {/* Render other properties as needed */}
+                          <Text style={styles.itemPrice}>
+                            {order.Destination.name}
                           </Text>
-                          {/* Add additional information as needed */}
-                          <View style={styles.priceContainer}>
-                            {/* Render other properties as needed */}
-                            <Text style={styles.itemPrice}>
-                              {order.Destination.name}
-                            </Text>
-                          </View>
-                          <View style={styles.dots}>
-                            <View style={styles.priceContainer2}>
-                              <Text
-                                style={[
-                                  styles.status,
-                                  {
-                                    color:
-                                      order.status === "Closed"
-                                        ? "green"
-                                        : "red",
-                                  },
-                                ]}
-                              >
-                                {order.status}
-                              </Text>
-                              {/* Render other properties as needed */}
-                              <View style={styles.priceContainer3}>
-                                {/* Render other properties as needed */}
-                                <Text
-                                  style={styles.itemPrice2}
-                                >{`${order.quantity[0].quantity}`}</Text>
-                                {/* Render other properties as needed */}
-                                <Text style={styles.currency}>
-                                  {order.quantity[0].item.name}
-                                </Text>
-                              </View>
-                            </View>
-                            <Icon
-                              name="chevron-right"
-                              size={34}
-                              color="#1D0776"
-                            />
-                          </View>
                         </View>
-                      </TouchableOpacity>
-                    </>
+                        <View style={styles.dots}>
+                          <View style={styles.priceContainer2}>
+                            <Text
+                              style={[
+                                styles.status,
+                                {
+                                  color:
+                                    order.status === "Closed" ? "green" : "red",
+                                },
+                              ]}
+                            >
+                              {order.status}
+                            </Text>
+                            {/* Render other properties as needed */}
+                            <View style={styles.priceContainer3}>
+                              {/* Render other properties as needed */}
+                              <Text
+                                style={styles.itemPrice2}
+                              >{`${order.quantity[0].quantity}`}</Text>
+                              {/* Render other properties as needed */}
+                              <Text style={styles.currency}>
+                                {order.quantity[0].item.name}
+                              </Text>
+                            </View>
+                          </View>
+                          <Icon
+                            name="chevron-right"
+                            size={34}
+                            color="#1D0776"
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
                   ))}
                 </>
               )}

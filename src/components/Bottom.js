@@ -11,6 +11,10 @@ import { HospitalDataContext } from "../contexts/hospitalContext";
 export default function Bottom() {
   const navigation = useNavigation();
   const { orderData } = useContext(HospitalDataContext);
+  const closedOrders = orderData.filter(order => order?.status === "Closed");
+
+  // Get the length of closed orders
+  const closedOrdersLength = closedOrders.length;
   
 const navigateToOrderScreen = () => {
   navigation.navigate('OrderScreen');
@@ -22,7 +26,7 @@ const navigateToApprovedScreen = () => {
   return (
     <View style={styles.bottomContainer}>
       <Text style={{ fontSize: 20, color: Colors.white, fontWeight: "bold" }}>
-        Mileage Approval Status
+        Mileage Status
       </Text>
 
       <View style={styles.completeContainer}>
@@ -44,11 +48,12 @@ const navigateToApprovedScreen = () => {
           icon={
             <FontAwesome name="check" size={24} color={"green"} />
           }
-          cardTextOne="0 miles"
-          cardText="Approved Mileage"
-          Reviewed="Approved"
+          cardTextOne={`${closedOrdersLength} Trips`}
+          cardText="Closed Trips"
+          Reviewed="Closed"
           style={{ backgroundColor: "lightgreen" }}
-          onPressFunction={navigateToApprovedScreen} 
+          // onPressFunction={navigateToApprovedScreen} 
+          onPressFunction={navigateToOrderScreen} 
         />
       </View>
 

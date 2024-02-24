@@ -63,15 +63,15 @@ export default function Middle() {
 
       <View style={styles.middleSectionTextContainer}>
         <View style={styles.middleSectionText}>
-          <Text style={styles.toptext}>Submitted</Text>
+          <Text style={styles.toptext}>Total Trips</Text>
+          <Text style={styles.bottomtext}>{orderData?.length}</Text>
+        </View>
+        <View style={styles.middleSectionText}>
+          <Text style={styles.toptext}>Closed Trips</Text>
           <Text style={styles.bottomtext}>{ongoingOrdersCount}</Text>
         </View>
         <View style={styles.middleSectionText}>
-          <Text style={styles.toptext}>Reviewed</Text>
-          <Text style={styles.bottomtext}>{reviewedOrdersCount}</Text>
-        </View>
-        <View style={styles.middleSectionText}>
-          <Text style={styles.toptext}>Approved</Text>
+          <Text style={styles.toptext}>Approved Trips</Text>
           <Text style={styles.bottomtext}>{closedOrdersCount}</Text>
         </View>
       </View>
