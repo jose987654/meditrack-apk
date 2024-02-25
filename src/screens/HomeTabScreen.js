@@ -49,8 +49,12 @@ export default function HomeScreenTab({ navigation }) {
         source={require("../../assets/bg.png")}
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       >
-        <Text style={styles.sectionTitle}>Medi-Track</Text>
-
+       <View style={styles.logoContainer}>
+  <View style={styles.logoWrapper}>
+    <Image source={require("../../assets/logo2.png")} style={styles.logoImage} />
+  </View>
+  <Text style={styles.sectionTitle}>Medi-Track</Text>
+</View>
         <View style={styles.container}>
           <Card
             containerStyle={{
@@ -218,6 +222,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: "#fff",
     // textDecorationLine: 'underline',
+  }, logoContainer: {
+    flexDirection: 'row', // Align items horizontally
+    alignItems: 'center', // Center items vertically
+  },
+  logoImage: {
+    width: 50, // Adjust the width as needed
+    height: 50, // Adjust the height as needed
+    resizeMode: 'contain', // Maintain aspect ratio and fit container
+    marginRight: 10, // Add margin for spacing
   },
   cardsContainer: {
     flexDirection: "column",
