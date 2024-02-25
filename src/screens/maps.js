@@ -327,7 +327,7 @@ export default function ({ navigation }) {
 
         await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
           accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 30000,
+          timeInterval: 10000,
           distanceInterval: 1,
         });
         await AsyncStorage.setItem("orderId", docRef.id);
