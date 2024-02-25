@@ -6,7 +6,7 @@ import { showMessage } from "react-native-flash-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-
+import AppUpdate from "./update";
 export default function Top() {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -33,27 +33,39 @@ export default function Top() {
     setLoading(false);
   }
   return (
-    <View style={styles.icons}>
-      <TouchableOpacity
-        style={styles.back}
-        onPress={() => navigation.goBack()} // Add this line to navigate back
-      >
-        <AntDesign name="arrowleft" size={34} color="white" />
-      </TouchableOpacity>
+    <>
+      <View style={styles.icons}>
+        <TouchableOpacity
+          style={styles.back}
+          onPress={() => navigation.goBack()} // Add this line to navigate back
+        >
+          <AntDesign name="arrowleft" size={34} color="white" />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.setting}
-        onPress={async () => {
-          console.log("Logout initiated"); // Log message
-          await logout(); // Call the logout function
-          console.log("Logout successful"); // Log message
-        }}
-      >
-        <AntDesign name="logout" size={22} color="white" />
-        <Text style={{color: 'white', textAlign: 'center',paddingHorizontal:10}}>Logout</Text>
-
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={styles.setting}
+          onPress={async () => {
+            console.log("Logout initiated"); // Log message
+            await logout(); // Call the logout function
+            console.log("Logout successful"); // Log message
+          }}
+        >
+          <AntDesign name="logout" size={22} color="white" />
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              paddingHorizontal: 10,
+            }}
+          >
+            Logout
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.icons}>
+        <AppUpdate />
+      </View>
+    </>
   );
 }
 
@@ -83,6 +95,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 7,
-    
   },
 });

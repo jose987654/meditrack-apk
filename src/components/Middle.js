@@ -81,7 +81,7 @@ export default function Middle() {
 
 const styles = StyleSheet.create({
   main: {
-    marginTop: 30,
+    marginTop: 20,
   },
   imageContainer: {
     justifyContent: "center",
