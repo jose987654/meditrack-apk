@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
     height: 50, // Adjust the height as needed
     resizeMode: 'contain', // Maintain aspect ratio and fit container
     marginRight: 10, // Add margin for spacing
+    borderRadius: 7,
   },
   cardsContainer: {
     flexDirection: "column",

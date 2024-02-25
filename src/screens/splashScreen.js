@@ -4,7 +4,7 @@ import { View, Text, Image, ImageBackground, StyleSheet, Animated } from "react-
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import { showMessage } from "react-native-flash-message";
+import { showMessage,hideMessage } from "react-native-flash-message";
 import NetInfo from "@react-native-community/netinfo";
 import { Alert } from "react-native";
 
@@ -14,7 +14,7 @@ const CustomSplashScreen = () => {
   const fadeIn = new Animated.Value(0);
  
   useEffect(() => {
-    const checkLoginStatus = async () => {
+    const checkConnectivity = async () => {
       try {
         const state = await NetInfo.fetch();
         if (!state.isConnected) {
@@ -22,36 +22,36 @@ const CustomSplashScreen = () => {
             message: 'No Internet Connection',
             description: 'Please check your internet connection.',
             type: 'danger',
+            duration: 3000,
           });
-          // Alert.alert(
-          //   'No Internet Connection',
-          //   'Please check your internet connection and try again.',
-          //   [{ text: 'OK', onPress: () => {} }]
-          // );
-          return;
-        }
-
-        const isLoggedInString = await AsyncStorage.getItem('isLoggedIn');
-        const isLoggedIn = isLoggedInString === 'true';
-
-        const timeout = setTimeout(() => {
+        } else {
+          // Your existing code for checking login status
+          hideMessage();
+          const isLoggedInString = await AsyncStorage.getItem('isLoggedIn');
+          const isLoggedIn = isLoggedInString === 'true';
           if (isLoggedIn) {
             navigation.navigate('MainTabs');
           } else {
             navigation.navigate('Login');
           }
           setShowSplash(false);
-        }, 2000);
-
-        return () => clearTimeout(timeout);
+        }
       } catch (error) {
         console.error('Error occurred while checking internet connectivity:', error);
-        // Handle error gracefully, possibly retry or show appropriate message to the user
+        // Handle error gracefully
+      } finally {
+        // Schedule the next check after 2 seconds
+        setTimeout(checkConnectivity, 2000);
       }
     };
-
-    checkLoginStatus();
-  }, [navigation]);
+  
+    // Start the initial check
+    checkConnectivity();
+  
+    // Cleanup function
+    return () => clearTimeout(checkConnectivity);
+  }, [navigation]); // Dependency array ensures useEffect runs only when navigation changes
+  
   useEffect(() => {
     // Fade-in animation for logo
     Animated.timing(fadeIn, {

@@ -256,8 +256,7 @@ export default function ({ navigation }) {
     fetchEmail();
   }, []);
   const handlePress = async () => {
-    // await AsyncStorage.removeItem("orderId");
-    // Check if orderId exists in AsyncStorage
+
     const orderId = await AsyncStorage.getItem("orderId");
     if (orderId) {
       Alert.alert(
@@ -352,11 +351,10 @@ export default function ({ navigation }) {
       }
     }
   };
-  // console.log("Destination:", JSON.stringify(destination, null, 2));
-  // console.log("startPoint:", JSON.stringify(startPoint, null, 2));
+  
   const GOOGLE_MAPS_APIKEY = "AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690";
   const origin = { latitude: 37.3318456, longitude: -122.0296002 };
-  // const destination = { latitude: 37.771707, longitude: -122.4053769 };
+  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Layout>
@@ -483,7 +481,7 @@ export default function ({ navigation }) {
               ref={swipeableRef}
               onSwipeableOpen={() => {
                 handlePress();
-                console.log("Swipe left successful!");
+                // console.log("Swipe left successful!");
               }}
               renderLeftActions={(progress, dragX) => {
                 const trans = dragX.interpolate({
