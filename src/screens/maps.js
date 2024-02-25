@@ -123,9 +123,10 @@ TaskManager.defineTask(
                     });
                   }
                   // Append new data
-                  existingJsonData.push(existingDistanceArray);
+                  existingJsonData.push({ ...currentLocation });
+                  // existingJsonData.push(existingDistanceArray);
 
-                  // Write updated data back to the file
+                  // Write updated data back to the file { ...currentLocation }
                   const jsonString = JSON.stringify(existingJsonData);
                   return FileSystem.writeAsStringAsync(path, jsonString).then(
                     () => {
