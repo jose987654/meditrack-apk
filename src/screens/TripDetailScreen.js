@@ -251,7 +251,7 @@ const TripDetails = () => {
                   "en-US",
                   { maximumFractionDigits: 2 }
                 )}
-                m
+                km
               </Text>
             </Text>
           )}
@@ -263,8 +263,7 @@ const TripDetails = () => {
                   color: "green",
                 }}
               >
-               {(Math.ceil((totalDistance / 1000) * 100) / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} km
-          
+               {(Math.ceil(totalDistance * 1000)).toLocaleString("en-US", { maximumFractionDigits: 2 })} m
                 
               </Text>
             </Text>
