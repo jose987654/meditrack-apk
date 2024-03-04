@@ -241,7 +241,7 @@ const TripDetails = () => {
           </Text>
           {order?.status === "Closed" && (
             <Text style={styles.price}>
-              Trip Distance (meters) :{" "}
+              Trip Distance (kilometers) :{" "}
               <Text
                 style={{
                   color: "green",
@@ -257,7 +257,7 @@ const TripDetails = () => {
           )}
            {order?.status === "Closed" && (
             <Text style={styles.price}>
-              Trip Distance (kilometers) :{" "}
+              Trip Distance (meters) :{" "}
               <Text
                 style={{
                   color: "green",
