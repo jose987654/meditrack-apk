@@ -23,6 +23,7 @@ const CustomSplashScreen = () => {
             description: 'Please check your internet connection.',
             type: 'danger',
             duration: 3000,
+            autoHide: false,
           });
         } else {
           // Your existing code for checking login status
@@ -41,7 +42,7 @@ const CustomSplashScreen = () => {
         // Handle error gracefully
       } finally {
         // Schedule the next check after 2 seconds
-        setTimeout(checkConnectivity, 2000);
+        setTimeout(checkConnectivity, 1000);
       }
     };
   
