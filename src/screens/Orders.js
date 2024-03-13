@@ -130,7 +130,10 @@ const OrdersComponent = () => {
     }
   };
   useEffect(() => {
-    fetchEmail();
+const fetchData = async () =>{
+    await fetchEmail();}
+fetchData();
+return() =>{  };
   }, []);
 
   const [menuItems, setMenuItems] = useState(orderData);
