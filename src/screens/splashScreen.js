@@ -14,6 +14,7 @@ const CustomSplashScreen = () => {
   const fadeIn = new Animated.Value(0);
  
   useEffect(() => {
+    let redirected = false; // Flag to track redirection
     const checkConnectivity = async () => {
       try {
         const state = await NetInfo.fetch();
@@ -30,11 +31,22 @@ const CustomSplashScreen = () => {
           hideMessage();
           const isLoggedInString = await AsyncStorage.getItem('isLoggedIn');
           const isLoggedIn = isLoggedInString === 'true';
+          // if (isLoggedIn) {
+          //   navigation.navigate('MainTabs');
+          // } else {
+          //   navigation.navigate('Login');
+          // }
           if (isLoggedIn) {
+          if (!redirected) {
             navigation.navigate('MainTabs');
-          } else {
-            navigation.navigate('Login');
+            redirected = true; // Update the flag
           }
+        } else {
+          if (!redirected) {
+            navigation.navigate('Login');
+            redirected = true; // Update the flag
+          }
+        }
           setShowSplash(false);
         }
       } catch (error) {
@@ -50,7 +62,8 @@ const CustomSplashScreen = () => {
     checkConnectivity();
   
     // Cleanup function
-    return () => clearTimeout(checkConnectivity);
+    // return () => clearTimeout(checkConnectivity);
+    // return () => {}; 
   }, [navigation]); // Dependency array ensures useEffect runs only when navigation changes
   
   useEffect(() => {
