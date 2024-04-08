@@ -277,7 +277,16 @@ export default function ({ navigation }) {
       longitude: startPoint?.coordinatesData?.[0]?.source?.longitude,
     };
 
-    const distance = haversine(currentLocation, startLocation, {
+   const distance = haversine(
+  {
+    latitude: currentLocation.latitude,
+    longitude: currentLocation.longitude,
+  },
+  {
+    latitude: startLocation.latitude,
+    longitude: startLocation.longitude,
+  },
+  {
       unit: "meter",
     });
 
