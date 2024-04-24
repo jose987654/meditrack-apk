@@ -160,11 +160,7 @@ export default function ({ navigation }) {
   );
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
-  const handleGetRouteData = () => {
-    if (startPoint?.coordinatesData?.[0]?.source && destination?.source) {
-      fetchRouteData(startPoint.coordinatesData[0].source, destination.source);
-    }
-  };
+ 
 
   const fetchRouteData = (origin, destination) => {
     const directionsService = new window.google.maps.DirectionsService();
@@ -191,7 +187,11 @@ export default function ({ navigation }) {
       }
     );
   };
-
+ const handleGetRouteData = () => {
+    if (startPoint?.coordinatesData?.[0]?.source && destination?.source) {
+      fetchRouteData(startPoint.coordinatesData[0].source, destination.source);
+    }
+  };
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -351,11 +351,12 @@ export default function ({ navigation }) {
       //   destination.latitude,
       //   destination.longitude
       // );
-
+      await handleGetRouteData();
       const orderData = {
         Destination: destination,
         Distance: [currentLocation],
-        StartPoint: startPoint,
+        DistanceGoogle: routeData.distance || 0,
+        RouteGoogle:routeData.route || null,
         Userid: email,
         quantity: samples,
         status: "Ongoing",
