@@ -153,51 +153,43 @@ export default function ({ navigation }) {
   const swipeableRef = useRef(null);
   const mapViewRef = useRef();
   const [tripStarted, setTripStarted] = useState(false);
-   const [routeData, setRouteData] = useState(null);
-  const { hospitalData } = useContext(HospitalDataContext);
+  const [routeData, setRouteData] = useState({});
+  // const { hospitalData } = useContext(HospitalDataContext);
   const { startPoint, destination, samples } = useContext(
     SelectedHospitalContext
   );
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
- 
+  const [distance, setDistance] = useState(null);
+  const [duration, setDuration] = useState(null);
+  const handleDirectionsReady = (result) => {
+    // const routeCoordinates = result?.coordinates;
+    // const distance = result?.distance;
+    // const duration = result?.duration;
+    setRouteData(result);
+    setDistance(result?.distance);
+    setDuration(result?.duration);
+    // console.log("Route Coordinates:", routeCoordinates);
+    // console.log("Distance:", distance);
+    // console.log("Duration:", duration);
+  };
 
-  const fetchRouteData = (origin, destination) => {
-    const directionsService = new window.google.maps.DirectionsService();
-    directionsService.route(
-      {
-        origin,
-        destination,
-        travelMode: 'DRIVING',
-        key: GOOGLE_MAPS_APIKEY,
-      },
-      (result, status) => {
-        if (status === 'OK') {
-          const route = result.routes[0];
-          const distance = route.legs.reduce((total, leg) => total + leg.distance.value, 0);
-console.log("Route data set:", {
-          origin,
-          destination,
-          distance,
-          route,
-        });
-          setRouteData({
-            origin,
-            destination,
-            distance,
-            route,
-          });
-        } else {
-          console.error('Directions request failed due to ' + status);
-        }
-      }
-    );
-  };
- const handleGetRouteData = () => {
-    if (startPoint?.coordinatesData?.[0]?.source && destination?.source) {
-      fetchRouteData(startPoint.coordinatesData[0].source, destination.source);
-    }
-  };
+  // {hospitalData.map(
+  //   (hospital, index) =>
+  //     hospital?.coordinatesData?.[0]?.source && (
+  //       <Marker
+  //         key={index}
+  //         coordinate={{
+  //           latitude:
+  //             hospital?.coordinatesData?.[0]?.source?.latitude,
+  //           longitude:
+  //             hospital?.coordinatesData?.[0]?.source?.longitude,
+  //         }}
+  //         title={`Hospital : ${hospital?.name}`}
+  //         pinColor="blue"
+  //       />
+  //     )
+  // )}
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -296,7 +288,6 @@ console.log("Route data set:", {
     fetchEmail();
   }, []);
   const handlePress = async () => {
-
     const orderId = await AsyncStorage.getItem("orderId");
     if (orderId) {
       Alert.alert(
@@ -316,18 +307,19 @@ console.log("Route data set:", {
       longitude: startPoint?.coordinatesData?.[0]?.source?.longitude,
     };
 
-   const distance = haversine(
-  {
-    latitude: currentLocation.latitude,
-    longitude: currentLocation.longitude,
-  },
-  {
-    latitude: startLocation.latitude,
-    longitude: startLocation.longitude,
-  },
-  {
-      unit: "meter",
-    });
+    const distance = haversine(
+      {
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+      },
+      {
+        latitude: startLocation.latitude,
+        longitude: startLocation.longitude,
+      },
+      {
+        unit: "meter",
+      }
+    );
 
     if (distance > 500000000) {
       showMessage({
@@ -357,12 +349,13 @@ console.log("Route data set:", {
       //   destination.latitude,
       //   destination.longitude
       // );
-      await handleGetRouteData();
+      // await handleGetRouteData();
       const orderData = {
         Destination: destination,
         Distance: [currentLocation],
-        DistanceGoogle: routeData.distance || 0,
-        RouteGoogle:routeData.route || null,
+        DistanceGoogle: routeData?.distance || 0,
+        RouteGoogle: routeData?.coordinates || [],
+        TimeGoogle: routeData?.duration || 0,
         Userid: email,
         quantity: samples,
         status: "Ongoing",
@@ -401,10 +394,9 @@ console.log("Route data set:", {
       }
     }
   };
-  
- 
+
   const origin = { latitude: 37.3318456, longitude: -122.0296002 };
-  
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Layout>
@@ -482,6 +474,7 @@ console.log("Route data set:", {
                       origin={startPoint.coordinatesData[0].source}
                       destination={destination.coordinatesData[0].source}
                       apikey={GOOGLE_MAPS_APIKEY}
+                      onReady={handleDirectionsReady}
                       strokeWidth={3}
                       strokeColor="green"
                     />
@@ -492,26 +485,11 @@ console.log("Route data set:", {
                       origin={startPoint?.coordinatesData?.[0].source}
                       destination={destination?.source}
                       apikey={GOOGLE_MAPS_APIKEY}
+                      onReady={handleDirectionsReady}
                       strokeWidth={3}
                       strokeColor="green"
                     />
                   )}
-                {hospitalData.map(
-                  (hospital, index) =>
-                    hospital?.coordinatesData?.[0]?.source && (
-                      <Marker
-                        key={index}
-                        coordinate={{
-                          latitude:
-                            hospital?.coordinatesData?.[0]?.source?.latitude,
-                          longitude:
-                            hospital?.coordinatesData?.[0]?.source?.longitude,
-                        }}
-                        title={`Hospital : ${hospital?.name}`}
-                        pinColor="blue"
-                      />
-                    )
-                )}
               </MapView>
             </View>
             <View
@@ -527,6 +505,31 @@ console.log("Route data set:", {
               <ZoomInButton onPress={zoomIn} />
               <ZoomOutButton onPress={zoomOut} />
             </View>
+            {distance && duration && (
+              <View
+                style={{
+                  display: "flex",
+                  backgroundColor: "#4a90e2",
+                  padding: 10,
+                  borderRadius: 5,
+                  position: "absolute",
+                  top: 80,
+                  left: 10,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Trip Distance: {distance} km
+                </Text>
+                <Text
+                  style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}
+                >
+                  Duration: {duration} min
+                </Text>
+              </View>
+            )}
             <Swipeable
               ref={swipeableRef}
               onSwipeableOpen={() => {
