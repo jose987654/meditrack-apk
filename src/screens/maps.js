@@ -175,6 +175,12 @@ export default function ({ navigation }) {
         if (status === 'OK') {
           const route = result.routes[0];
           const distance = route.legs.reduce((total, leg) => total + leg.distance.value, 0);
+console.log("Route data set:", {
+          origin,
+          destination,
+          distance,
+          route,
+        });
           setRouteData({
             origin,
             destination,
