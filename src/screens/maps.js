@@ -31,7 +31,7 @@ import * as Location from "expo-location";
 import * as FileSystem from "expo-file-system";
 
 const path = FileSystem.documentDirectory + "distanceData.json";
-
+const GOOGLE_MAPS_APIKEY = "AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690";
 const LOCATION_TASK_NAME = "background-location-task";
 // Define the path for the JSON file
 // const path = RNFS.DocumentDirectoryPath + "/distanceData.json";
@@ -153,12 +153,45 @@ export default function ({ navigation }) {
   const swipeableRef = useRef(null);
   const mapViewRef = useRef();
   const [tripStarted, setTripStarted] = useState(false);
+   const [routeData, setRouteData] = useState(null);
   const { hospitalData } = useContext(HospitalDataContext);
   const { startPoint, destination, samples } = useContext(
     SelectedHospitalContext
   );
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
+  const handleGetRouteData = () => {
+    if (startPoint?.coordinatesData?.[0]?.source && destination?.source) {
+      fetchRouteData(startPoint.coordinatesData[0].source, destination.source);
+    }
+  };
+
+  const fetchRouteData = (origin, destination) => {
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin,
+        destination,
+        travelMode: 'DRIVING',
+        key: GOOGLE_MAPS_APIKEY,
+      },
+      (result, status) => {
+        if (status === 'OK') {
+          const route = result.routes[0];
+          const distance = route.legs.reduce((total, leg) => total + leg.distance.value, 0);
+          setRouteData({
+            origin,
+            destination,
+            distance,
+            route,
+          });
+        } else {
+          console.error('Directions request failed due to ' + status);
+        }
+      }
+    );
+  };
+
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -362,7 +395,7 @@ export default function ({ navigation }) {
     }
   };
   
-  const GOOGLE_MAPS_APIKEY = "AIzaSyAva8VdYE32GpTxn6zxQM56rFfhj7tx690";
+ 
   const origin = { latitude: 37.3318456, longitude: -122.0296002 };
   
   return (
