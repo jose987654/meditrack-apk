@@ -31,7 +31,8 @@ export default function ({ navigation }) {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState("");
+ 
   async function register() {
     setLoading(true);
     await createUserWithEmailAndPassword(auth, email, password)
@@ -62,15 +63,16 @@ export default function ({ navigation }) {
       .catch((error) => {
         let errorCode = error.code;
         let errorMessage = error.message;
-        // ...
-        // console.log(errorCode);
+        setErrorMessage(errorMessage);
+            // ...
+        console.log(error);
         // console.log(errorMessage);
         setLoading(false);
         showMessage({
           message: "Error!",
           description: errorCode,
           type: "danger",
-          duration: 5000,
+          duration: 50000,
         });
       });
   }
@@ -124,6 +126,26 @@ export default function ({ navigation }) {
               >
                 SignUp, Medi-Track
               </Text>
+              {errorMessage && (
+              <View
+                style={{
+                  alignSelf: "center",
+                  backgroundColor: "#ffe6e6",
+                  borderRadius: 5,
+                  padding: 20,
+                  margin: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "red",
+                    textAlign: "center",
+                  }}
+                >
+                  {errorMessage}
+                </Text>
+              </View>
+            )}
               <View
                 style={{
                   flexDirection: "row",

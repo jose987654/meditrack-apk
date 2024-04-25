@@ -32,6 +32,7 @@ export default function ({ navigation }) {
   const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -57,160 +58,180 @@ export default function ({ navigation }) {
 
       navigation.navigate("MainTabs"); // Navigate to "MainTabs"
     } catch (error) {
+      setLoading(false);
+      setErrorMessage("Invalid email or password");
       console.log(error);
-      alert(errorMessage);
+      // alert(errorMessage);
       // Handle errors here
     }
     setLoading(false);
   }
 
-  return (  
-      <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
-        <Layout>
-          <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1,
+  return (
+    <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
+      <Layout>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: isDarkmode ? "#17171E" : themeColor.white100,
             }}
           >
+            <Image
+              resizeMode="contain"
+              style={{
+                height: 220,
+                width: 220,
+              }}
+              source={require("../../assets/login.png")}
+            />
+          </View>
+          <View
+            style={{
+              flex: 3,
+              paddingHorizontal: 20,
+              paddingBottom: 20,
+              backgroundColor: isDarkmode ? themeColor.dark : themeColor.white,
+            }}
+          >
+            <Text
+              fontWeight="bold"
+              style={{
+                alignSelf: "center",
+                padding: 10,
+              }}
+              size="h3"
+            >
+              Login, Medi-Track
+            </Text>
+            {errorMessage && (
+              <View
+                style={{
+                  alignSelf: "center",
+                  backgroundColor: "#ffe6e6",
+                  borderRadius: 5,
+                  padding: 20,
+                  margin: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "red",
+                    textAlign: "center",
+                  }}
+                >
+                  {errorMessage}
+                </Text>
+              </View>
+            )}
+            <Text>Email Address</Text>
+            <TextInput
+              containerStyle={{ marginTop: 15 }}
+              placeholder="Enter your email-address..."
+              value={email}
+              autoCapitalize="none"
+              autoCompleteType="off"
+              autoCorrect={false}
+              keyboardType="email-address"
+              onChangeText={(text) => setEmail(text)}
+            />
+
+            <Text style={{ marginTop: 15 }}>Password</Text>
+            <Input
+              containerStyle={{ marginTop: 15, width: "105%", marginLeft: 0 }}
+              placeholder="Enter your password..."
+              value={password}
+              autoCapitalize="none"
+              autoCompleteType="off"
+              autoCorrect={false}
+              secureTextEntry={!isPasswordVisible}
+              onChangeText={(text) => setPassword(text)}
+              rightIcon={
+                <TouchableOpacity
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                >
+                  <Icon
+                    name={isPasswordVisible ? "eye" : "eye-off"}
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              }
+              inputContainerStyle={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                borderRadius: 10,
+              }}
+            />
+            <Button
+              text={loading ? "Loading" : "Continue"}
+              onPress={() => {
+                login();
+              }}
+              style={{
+                marginTop: 20,
+              }}
+              disabled={loading}
+            />
+
             <View
               style={{
-                flex: 1,
-                justifyContent: "center",
+                flexDirection: "row",
                 alignItems: "center",
-                backgroundColor: isDarkmode ? "#17171E" : themeColor.white100,
+                marginTop: 15,
+                justifyContent: "center",
               }}
             >
-              <Image
-                resizeMode="contain"
-                style={{
-                  height: 220,
-                  width: 220,
+              <Text size="md">Don't have an account?</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Register");
                 }}
-                source={require("../../assets/login.png")}
-              />
+              >
+                <Text
+                  size="md"
+                  fontWeight="bold"
+                  style={{
+                    marginLeft: 5,
+                  }}
+                >
+                  Register here
+                </Text>
+              </TouchableOpacity>
             </View>
             <View
               style={{
-                flex: 3,
-                paddingHorizontal: 20,
-                paddingBottom: 20,
-                backgroundColor: isDarkmode
-                  ? themeColor.dark
-                  : themeColor.white,
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 10,
+                justifyContent: "center",
               }}
             >
-              <Text
-                fontWeight="bold"
-                style={{
-                  alignSelf: "center",
-                  padding: 30,
-                }}
-                size="h3"
-              >
-                Login, Medi-Track
-              </Text>
-              <Text>Email Address</Text>
-              <TextInput
-                containerStyle={{ marginTop: 15 }}
-                placeholder="Enter your email-address..."
-                value={email}
-                autoCapitalize="none"
-                autoCompleteType="off"
-                autoCorrect={false}
-                keyboardType="email-address"
-                onChangeText={(text) => setEmail(text)}
-              />
-
-              <Text style={{ marginTop: 15 }}>Password</Text>
-              <Input
-                containerStyle={{ marginTop: 15, width: "105%", marginLeft: 0 }}
-                placeholder="Enter your password..."
-                value={password}
-                autoCapitalize="none"
-                autoCompleteType="off"
-                autoCorrect={false}
-                secureTextEntry={!isPasswordVisible}
-                onChangeText={(text) => setPassword(text)}
-                rightIcon={
-                  <TouchableOpacity
-                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                  >
-                    <Icon
-                      name={isPasswordVisible ? "eye" : "eye-off"}
-                      size={24}
-                      color="black"
-                    />
-                  </TouchableOpacity>
-                }
-                inputContainerStyle={{
-                  borderWidth: 1,
-                  borderColor: "#ccc",
-                  borderRadius: 10,
-                }}
-              />
-              <Button
-                text={loading ? "Loading" : "Continue"}
+              <TouchableOpacity
                 onPress={() => {
-                  login();
-                }}
-                style={{
-                  marginTop: 20,
-                }}
-                disabled={loading}
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 15,
-                  justifyContent: "center",
+                  navigation.navigate("ForgetPassword");
                 }}
               >
-                <Text size="md">Don't have an account?</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("Register");
-                  }}
-                >
-                  <Text
-                    size="md"
-                    fontWeight="bold"
-                    style={{
-                      marginLeft: 5,
-                    }}
-                  >
-                    Register here
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 10,
-                  justifyContent: "center",
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("ForgetPassword");
-                  }}
-                >
-                  <Text size="md" fontWeight="bold">
-                    Forgot password
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 30,
-                  justifyContent: "center",
-                }}
-              >
-                {/* <TouchableOpacity
+                <Text size="md" fontWeight="bold">
+                  Forgot password
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 30,
+                justifyContent: "center",
+              }}
+            >
+              {/* <TouchableOpacity
                 onPress={() => {
                   isDarkmode ? setTheme("light") : setTheme("dark");
                 }}
@@ -225,11 +246,10 @@ export default function ({ navigation }) {
                   {isDarkmode ? "☀️ light theme" : "🌑 dark theme"}
                 </Text>
               </TouchableOpacity> */}
-              </View>
             </View>
-          </ScrollView>
-        </Layout>
-      </KeyboardAvoidingView>
-    
+          </View>
+        </ScrollView>
+      </Layout>
+    </KeyboardAvoidingView>
   );
 }
