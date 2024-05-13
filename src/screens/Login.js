@@ -30,6 +30,8 @@ import { Input } from "react-native-elements";
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
   const auth = getAuth();
+  const [firstName, setFirstName] = useState(""); // New state for user's first name
+  const [lastName, setLastName] = useState(""); // New state for user's last name
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -169,15 +171,25 @@ export default function ({ navigation }) {
                 borderRadius: 10,
               }}
             />
-               <Text style={{ marginTop: 15 }}>Name</Text>
+              <Text style={{ marginTop: 15 }}>First Name</Text>
             <TextInput
               containerStyle={{ marginTop: 15 }}
-              placeholder="Enter your name..."
-              value={name}
+              placeholder="Enter your first name..."
+              value={firstName}
               autoCapitalize="words"
               autoCompleteType="name"
               autoCorrect={false}
-              onChangeText={(text) => setName(text)}
+              onChangeText={(text) => setFirstName(text)} 
+            />
+                <Text style={{ marginTop: 15 }}>Last Name</Text>
+            <TextInput
+              containerStyle={{ marginTop: 15 }}
+              placeholder="Enter your last name..."
+              value={lastName}
+              autoCapitalize="words"
+              autoCompleteType="name"
+              autoCorrect={false}
+              onChangeText={(text) => setLastName(text)}
             />
             <Button
               text={loading ? "Loading" : "Continue"}
