@@ -169,6 +169,16 @@ export default function ({ navigation }) {
                 borderRadius: 10,
               }}
             />
+               <Text style={{ marginTop: 15 }}>Name</Text>
+            <TextInput
+              containerStyle={{ marginTop: 15 }}
+              placeholder="Enter your name..."
+              value={name}
+              autoCapitalize="words"
+              autoCompleteType="name"
+              autoCorrect={false}
+              onChangeText={(text) => setName(text)}
+            />
             <Button
               text={loading ? "Loading" : "Continue"}
               onPress={() => {
