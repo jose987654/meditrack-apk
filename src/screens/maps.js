@@ -57,8 +57,8 @@ TaskManager.defineTask(
       const orderSnapshot = await getDoc(orderDocRef);
       // console.log("snapshot :", orderSnapshot);
       const existingData = orderSnapshot.data();
-      console.log("existingData :", existingData);
-      console.log("snapshot :", orderSnapshot);
+      // console.log("existingData :", existingData);
+      // console.log("snapshot :", orderSnapshot);
       // const existingDistance = [];
       const existingDistance = existingData.Distance || [];
       // const updatedDistance = [...existingDistance, currentLocation];
@@ -130,7 +130,7 @@ TaskManager.defineTask(
                   const jsonString = JSON.stringify(existingJsonData);
                   return FileSystem.writeAsStringAsync(path, jsonString).then(
                     () => {
-                      console.log("Data written to JSON file successfully");
+                      console.log("");
                     }
                   );
                 }
@@ -141,7 +141,7 @@ TaskManager.defineTask(
         // Run the tasks concurrently
         await Promise.all(tasks);
 
-        console.log("Distance array updated successfully");
+        // console.log("Distance array updated successfully");
         // console.log("Distance array written to local file");
       } catch (error) {
         console.error("Error updating Distance array:", error);
@@ -197,7 +197,7 @@ export default function ({ navigation }) {
         alert(
           "This app needs access to your location to function properly. Please grant location access."
         );
-        console.log("Permission to access location was denied");
+        // console.log("Permission to access location was denied");
         return;
       }
       const { status: backgroundStatus } =
@@ -351,6 +351,7 @@ export default function ({ navigation }) {
       // );
       // await handleGetRouteData();
       const orderData = {
+        StartPoint: startPoint,
         Destination: destination,
         Distance: [currentLocation],
         DistanceGoogle: routeData?.distance || 0,
@@ -365,7 +366,7 @@ export default function ({ navigation }) {
       // console.log("orderData :", JSON.stringify(orderData, null, 2));
       try {
         const docRef = await addDoc(collection(db, "orders"), orderData);
-        console.log("Document written with ID: ", docRef.id);
+        // console.log("Document written with ID: ", docRef.id);
         await FileSystem.writeAsStringAsync(path, JSON.stringify([]));
 
         await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
@@ -526,7 +527,7 @@ export default function ({ navigation }) {
                 <Text
                   style={{ color: "#fff", fontSize: 16, fontWeight: "bold" }}
                 >
-                  Duration: {duration} min
+                  Duration: {parseFloat(duration).toFixed(1)} min
                 </Text>
               </View>
             )}

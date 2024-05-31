@@ -32,7 +32,7 @@ const LOCATION_TASK_NAME = "background-location-task";
 const TripDetails = () => {
   const navigation = useNavigation();
   const { order, setOrder } = useContext(OrderContext);
-  // console.log("order data stored here:", order);
+  console.log("order data stored here:", order);
   // console.log("orderSnapshot :", JSON.stringify(order, null, 2));
   const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
     var R = 6371; // Radius of the earth in km
