@@ -170,7 +170,7 @@ export default function ({ navigation }) {
     setDistance(result?.distance);
     setDuration(result?.duration);
     // console.log("Route Coordinates:", routeCoordinates);
-    // console.log("Distance:", distance);
+    console.log("Distance result from API:", result);
     // console.log("Duration:", duration);
   };
 
@@ -354,9 +354,9 @@ export default function ({ navigation }) {
         StartPoint: startPoint,
         Destination: destination,
         Distance: [currentLocation],
-        DistanceGoogle: routeData?.distance || 0,
-        RouteGoogle: routeData?.coordinates || [],
-        TimeGoogle: routeData?.duration || 0,
+        Expected_trip_distance_Google_API: routeData?.distance || 0,
+        Expected_trip_route_Google_API: routeData?.coordinates || [],
+        Expected_trip_Time_Google_API: routeData?.duration || 0,
         Userid: email,
         quantity: samples,
         status: "Ongoing",
