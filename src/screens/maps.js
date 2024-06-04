@@ -170,7 +170,7 @@ export default function ({ navigation }) {
     setDistance(result?.distance);
     setDuration(result?.duration);
     // console.log("Route Coordinates:", routeCoordinates);
-    console.log("Distance result from API:", result);
+    // console.log("Distance result from API:", result);
     // console.log("Duration:", duration);
   };
 
