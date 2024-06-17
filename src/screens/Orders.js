@@ -117,7 +117,7 @@ const OrdersComponent = () => {
           .sort((a, b) => b.time.seconds - a.time.seconds);
 
         // Log the orders
-        // console.log("Orders:", JSON.stringify(orders, null, 2));
+        console.log("Orders:", JSON.stringify(orders, null, 2));
 
         // Set the orderData state variable with the fetched data
         setOrderData(orders);
@@ -327,7 +327,7 @@ return() =>{  };
                         <View style={styles.priceContainer}>
                           {/* Render other properties as needed */}
                           <Text style={styles.itemPrice}>
-                            {order.Destination.name}
+                            {order.Destination.name || order.Destination.Endpoint}
                           </Text>
                         </View>
                         <View style={styles.dots}>
