@@ -167,7 +167,7 @@ const TripDetails = () => {
               Start: {order?.StartPoint?.name}
             </Text>
             <Text style={styles.startPointSubtitle}>
-              Location: {order?.StartPoint?.location}
+              Location: {order?.StartPoint?.location || order?.StartPoint?.name}
             </Text>
             {order?.StartPoint?.coordinatesData.map((data, index) => (
               <View key={index} style={styles.coordinatesContainer}>
